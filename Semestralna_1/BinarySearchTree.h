@@ -1,5 +1,6 @@
 #pragma once
 #include "Table.h"
+#include <queue>
 
 namespace AUS2
 {
@@ -8,6 +9,8 @@ namespace AUS2
 	{
 	protected:
 		class BSTNode;
+		class TreeIterator;
+		class InOrderTreeIterator;
 		bool try_find(const DataType &data, BSTNode *&last_checked);
 		void extract_node(BSTNode *node);
 	public:
@@ -16,16 +19,20 @@ namespace AUS2
 
 		virtual const size_t size() const override;
 		virtual void clear() override;
-		virtual bool contains_pk(const DataType &data) override;
 
 		virtual bool insert(const DataType &data) override;
 		virtual DataType &remove(const DataType &pattern) override;
 
-		virtual DataType &get_by_pk(const DataType &pattern) override;
-		virtual const DataType get_by_pk(const DataType &pattern) const override;
+		virtual DataType &get(const ICompare<DataType> &comparator);
+		virtual const DataType get(const ICompare<DataType> &comparator) const;
 
-		virtual DataType &get_by_data(const DataType &pattern) override;
-		virtual const DataType get_by_data(const DataType &pattern) const override;
+		virtual DataType &get(std::list<const ICompare<DataType> &> comparator_list);
+		virtual const DataType get(std::list<const ICompare<DataType> &> comparator_list) const;
+
+		virtual Iterator<DataType> *begin_iterator() const;
+		virtual Iterator<DataType> *end_iterator() const;
+
+		void 
 	private:
 		BSTNode *root_;
 		size_t size_;
@@ -56,66 +63,77 @@ namespace AUS2
 		BSTNode *parent_;
 	};
 
+	template <class DataType>
+	class BinarySearchTree<DataType>::TreeIterator : public Iterator<DataType>
+	{
+	public:
+		virtual ~TreeIterator() override;
+		virtual Iterator<DataType> &operator=(const Iterator<DataType> &iter) override;
+		virtual const int operator==(const Iterator<DataType> &iter) const override;
+		virtual const DataType operator*() const override;
+		virtual Iterator<DataType> &operator++() override;
+		virtual void populate_path() = 0;
+	private:
+		std::queue<BinarySearchTree<DataType>::BSTNode *, std::list<BinarySearchTree<DataType>::BSTNode *>> path_;
+
+	};
+
+	template <class DataType>
+	class BinarySearchTree<DataType>::InOrderTreeIterator : public BinarySearchTree<DataType>::TreeIterator
+	{
+
+	};
+
 #pragma region BSTIItem definition
 	template <class DataType>
 	inline BinarySearchTree<DataType>::BSTNode::BSTNode(const DataType &data) :
-		data_(data), left_son_(nullptr), right_son_(nullptr)
-	{
+		data_(data), left_son_(nullptr), right_son_(nullptr) {
 	}
 
 	template <class DataType>
-	inline BinarySearchTree<DataType>::BSTNode::~BSTNode()
-	{
+	inline BinarySearchTree<DataType>::BSTNode::~BSTNode() {
 		this->left_son_ = nullptr;
 		this->right_son_ = nullptr;
 		this->parent_ = nullptr;
 	}
 
 	template <class DataType>
-	inline DataType &BinarySearchTree<DataType>::BSTNode::data()
-	{
+	inline DataType &BinarySearchTree<DataType>::BSTNode::data() {
 		return this.data_;
 	}
 
 	template <class DataType>
-	inline BinarySearchTree<DataType>::BSTNode *BinarySearchTree<DataType>::BSTNode::left_son() const
-	{
+	inline BinarySearchTree<DataType>::BSTNode *BinarySearchTree<DataType>::BSTNode::left_son() const {
 		return this->left_son_;
 	}
 
 	template <class DataType>
-	inline BinarySearchTree<DataType>::BSTNode *BinarySearchTree<DataType>::BSTNode::right_son() const
-	{
+	inline BinarySearchTree<DataType>::BSTNode *BinarySearchTree<DataType>::BSTNode::right_son() const {
 		return this->right_son_;
 	}
 
 	template <class DataType>
-	inline BinarySearchTree<DataType>::BSTNode *BinarySearchTree<DataType>::BSTNode::parent() const
-	{
+	inline BinarySearchTree<DataType>::BSTNode *BinarySearchTree<DataType>::BSTNode::parent() const {
 		return this->parent_;
 	}
 
 	template <class DataType>
-	inline void BinarySearchTree<DataType>::BSTNode::left_son(BSTNode *node)
-	{
+	inline void BinarySearchTree<DataType>::BSTNode::left_son(BSTNode *node) {
 		this->left_son_ = node;
 	}
 
 	template <class DataType>
-	inline void BinarySearchTree<DataType>::BSTNode::right_son(BSTNode *node)
-	{
+	inline void BinarySearchTree<DataType>::BSTNode::right_son(BSTNode *node) {
 		this->right_son_ = node;
 	}
 
 	template <class DataType>
-	inline void BinarySearchTree<DataType>::BSTNode::parent(BSTNode *node)
-	{
+	inline void BinarySearchTree<DataType>::BSTNode::parent(BSTNode *node) {
 		this->parent_ = node;
 	}
 
 	template <class DataType>
-	inline void BinarySearchTree<DataType>::BSTNode::add_son(BSTNode *node)
-	{
+	inline void BinarySearchTree<DataType>::BSTNode::add_son(BSTNode *node) {
 		if (node->data_ < this->data_) {
 			this->left_son_ = node;
 		}
@@ -126,22 +144,19 @@ namespace AUS2
 	}
 
 	template <class DataType>
-	inline const int BinarySearchTree<DataType>::BSTNode::number_of_sons() const
-	{
+	inline const int BinarySearchTree<DataType>::BSTNode::number_of_sons() const {
 		return bool(this->left_son_) + bool(this->right_son_);
 	}
 
 	template <class DataType>
-	inline const bool BinarySearchTree<DataType>::BSTNode::is_left_son() const
-	{
+	inline const bool BinarySearchTree<DataType>::BSTNode::is_left_son() const {
 		return this->parent_ && this->parent_->left_son_ == this;
 	}
 #pragma endregion
 
 #pragma region BinarySearchTree definition
 	template<class DataType>
-	inline bool BinarySearchTree<DataType>::try_find(const DataType &data, BSTNode *&last_checked)
-	{
+	inline bool BinarySearchTree<DataType>::try_find(const DataType &data, BSTNode *&last_checked) {
 		BSTNode *checking = this->root_;
 		last_checked = this->root_;
 		while (checking && checking != data) {
@@ -160,8 +175,7 @@ namespace AUS2
 	}
 
 	template<class DataType>
-	inline void BinarySearchTree<DataType>::extract_node(BSTNode *node)
-	{
+	inline void BinarySearchTree<DataType>::extract_node(BSTNode *node) {
 		BSTNode *parent = node->parent();
 		bool is_left = node->is_left_son();
 		int sons = node->number_of_sons();
@@ -229,31 +243,24 @@ namespace AUS2
 	}
 
 	template<class DataType>
-	inline BinarySearchTree<DataType>::BinarySearchTree()
-	{
+	inline BinarySearchTree<DataType>::BinarySearchTree() {
 	}
 
 	template<class DataType>
-	inline BinarySearchTree<DataType>::~BinarySearchTree()
-	{
+	inline BinarySearchTree<DataType>::~BinarySearchTree() {
 	}
+
 	template<class DataType>
-	inline const size_t BinarySearchTree<DataType>::size() const
-	{
+	inline const size_t BinarySearchTree<DataType>::size() const {
 		return this->size_;
 	}
+
 	template<class DataType>
-	inline void BinarySearchTree<DataType>::clear()
-	{
+	inline void BinarySearchTree<DataType>::clear() {
 	}
+
 	template<class DataType>
-	inline bool BinarySearchTree<DataType>::contains_pk(const DataType &data)
-	{
-		return false;
-	}
-	template<class DataType>
-	inline bool BinarySearchTree<DataType>::insert(const DataType &data)
-	{
+	inline bool BinarySearchTree<DataType>::insert(const DataType &data) {
 		BSTNode *parent;
 		if (try_find(data, parent)) {
 			return false;
@@ -267,9 +274,9 @@ namespace AUS2
 		this->size_++;
 		return true;
 	}
+
 	template<class DataType>
-	inline DataType &BinarySearchTree<DataType>::remove(const DataType &pattern)
-	{
+	inline DataType &BinarySearchTree<DataType>::remove(const DataType &pattern) {
 		BSTNode *node;
 		if (try_find(pattern, node)) {
 			DataType &data = node->data();
@@ -278,32 +285,38 @@ namespace AUS2
 			return data;
 		}
 	}
-	template<class DataType>
-	inline DataType &BinarySearchTree<DataType>::get_by_pk(const DataType &pattern)
-	{
-		BSTNode *node;
-		if (try_find(pattern, node)) {
-			return node->data();
-		}
 
-	}
 	template<class DataType>
-	inline const DataType BinarySearchTree<DataType>::get_by_pk(const DataType &pattern) const
-	{
-		BSTNode *node;
-		if (try_find(pattern, node)) {
-			return node->data();
+	inline BinarySearchTree<DataType>::TreeIterator::~TreeIterator() {
+		delete this->path_;
+		this->path_ = nullptr;
+	}
+
+	template<class DataType>
+	inline Iterator<DataType> &BinarySearchTree<DataType>::TreeIterator::operator=(const Iterator<DataType> &iter) {
+		if (this != &iter) {
+			*this->path_ = *dynamic_cast<const TreeIterator &>(iter).path_;
 		}
+		return *this;
 	}
+
 	template<class DataType>
-	inline DataType &BinarySearchTree<DataType>::get_by_data(const DataType &pattern)
-	{
-		// TODO: insert return statement here
+	inline const DataType BinarySearchTree<DataType>::TreeIterator::operator*() const {
+		return this->path_->front()->data();
 	}
+
 	template<class DataType>
-	inline const DataType BinarySearchTree<DataType>::get_by_data(const DataType &pattern) const
-	{
-		return DataType();
+	inline Iterator<DataType> &BinarySearchTree<DataType>::TreeIterator::operator++() {
+		if (!this->path_.empty()) {
+			this->path_.pop();
+		}
+		return *this;
+	}
+
+	template<class DataType>
+	inline const int BinarySearchTree<DataType>::TreeIterator::operator==(const Iterator<DataType> &iter) const {
+		TreeIterator cast_iter = dynamic_cast<const TreeIterator &>(iter);
+		return this->path_.empty() : this->path_.size() == cast_iter->path_.size() && this->path_.front()->data() == cast_iter.front()->data() ? false;
 	}
 }
 #pragma endregion
