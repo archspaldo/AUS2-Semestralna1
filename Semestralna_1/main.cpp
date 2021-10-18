@@ -1,44 +1,16 @@
 #include <iostream>
+#include "2-3Tree.h"
 #include <list>
-
-class ICompare
-{
-
-};
+#include <iterator>
 
 
-template <class DataType, class AttributeType>
-//requires CheckType<DataType, IComparable<DataType>>
-class Comparator : public ICompare
-{
-
-protected:
-	Comparator()
-	{
-	};
-};
-
-template <class AttributeType>
-class IntComparator : public Comparator<int, AttributeType>
-{
-protected:
-	IntComparator()
-	{
-	};
-};
-
-class IntIntComparator :public IntComparator<int>
-{
-public:
-	IntIntComparator()
-	{
-	};
-};
-
-int main()
-{
-	std::list<ICompare*> l;
-	l.push_back(new IntIntComparator());
-	delete l.back();
+int main() {
+	AUS2::TwoThreeTree<int, int> *tree = new AUS2::TwoThreeTree<int, int>();
+	for (int i = 0; i <= 1000; i++) {
+		tree->insert(i, i);
+	}
+	for (int i = 0; i <= 1000; i++) {
+		std::cout << tree->remove(i);
+	}
+	return 0;
 }
-

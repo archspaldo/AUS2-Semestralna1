@@ -1,14 +1,15 @@
 #pragma once
+#include <iterator>
 
 template <class DataType>
 class Iterator
 {
 public:
 	virtual ~Iterator();
-	virtual Iterator<DataType> &operator=(const Iterator<DataType> &iter) = 0;
-	virtual const int operator==(const Iterator<DataType> &iter) const = 0;
+	virtual Iterator &operator=(const Iterator &iter) = 0;
+	virtual const int operator==(const Iterator &iter) const = 0;
 	virtual const DataType operator*() const = 0;
-	virtual Iterator<DataType> &operator++() = 0;
+	virtual Iterator &operator++() = 0;
 };
 
 template <class DataType>
@@ -19,10 +20,10 @@ private:
 public:
 	ProxyIterator(Iterator<DataType> *iterator);
 	virtual ~ProxyIterator();
-	ProxyIterator<DataType> &operator=(const ProxyIterator<DataType> &iter);
-	const int operator==(const ProxyIterator<DataType> &iter) const;
+	ProxyIterator<DataType> &operator=(const ProxyIterator &iter);
+	const int operator==(const ProxyIterator &iter) const;
 	const DataType operator*() const;
-	const ProxyIterator<DataType> &operator++();
+	const ProxyIterator &operator++();
 };
 
 template <class DataType>
@@ -55,13 +56,13 @@ inline ProxyIterator<DataType> &ProxyIterator<DataType>::operator=(const ProxyIt
 }
 
 template<class DataType>
-inline const int ProxyIterator<DataType>::operator==(const ProxyIterator<DataType> &iter) const {
-	return 0;
+inline const DataType ProxyIterator<DataType>::operator*() const {
+	return **this->iterator_;
 }
 
 template<class DataType>
-inline const DataType ProxyIterator<DataType>::operator*() const {
-	return **this->iterator_;
+inline const int ProxyIterator<DataType>::operator==(const ProxyIterator &iter) const {
+	return *this->iterator_ == *iter.iterator_;
 }
 
 template<class DataType>
@@ -74,10 +75,7 @@ inline const ProxyIterator<DataType> &ProxyIterator<DataType>::operator++() {
 	return *this;
 }
 
-template<class DataType>
-inline const int ProxyIterator<DataType>::operator==(const ProxyIterator<DataType> &iter) const {
-	return *this->iterator_ == *iter.iterator_;
-}
+
 
 template<class DataType>
 inline ProxyIterator<DataType> IIterable<DataType>::begin() const {

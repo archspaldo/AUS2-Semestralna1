@@ -23,11 +23,11 @@ namespace AUS2
 		virtual bool insert(const DataType &data) override;
 		virtual DataType &remove(const DataType &pattern) override;
 
-		virtual DataType &get(const ICompare<DataType> &comparator);
-		virtual const DataType get(const ICompare<DataType> &comparator) const;
+		virtual DataType &get(const IComparator<DataType> &comparator);
+		virtual const DataType get(const IComparator<DataType> &comparator) const;
 
-		virtual DataType &get(std::list<const ICompare<DataType> &> comparator_list);
-		virtual const DataType get(std::list<const ICompare<DataType> &> comparator_list) const;
+		virtual DataType &get(std::list<const IComparator<DataType> &> comparator_list);
+		virtual const DataType get(std::list<const IComparator<DataType> &> comparator_list) const;
 
 		virtual Iterator<DataType> *begin_iterator() const;
 		virtual Iterator<DataType> *end_iterator() const;
@@ -39,13 +39,12 @@ namespace AUS2
 	};
 
 	template <class DataType>
-	class BinarySearchTree<DataType>::BSTNode
+	class BinarySearchTree<DataType>::BSTNode : public Table<DataType>::DataNode
 	{
 	public:
 		BSTNode(const DataType &data);
-		~BSTNode();
+		virtual ~BSTNode() override;
 
-		DataType &data();
 		BSTNode *left_son() const;
 		BSTNode *right_son() const;
 		BSTNode *parent() const;
@@ -57,7 +56,6 @@ namespace AUS2
 		const bool is_left_son() const;
 		const int number_of_sons() const;
 	protected:
-		DataType &data_;
 		BSTNode *left_son_;
 		BSTNode *right_son_;
 		BSTNode *parent_;
@@ -87,7 +85,7 @@ namespace AUS2
 #pragma region BSTIItem definition
 	template <class DataType>
 	inline BinarySearchTree<DataType>::BSTNode::BSTNode(const DataType &data) :
-		data_(data), left_son_(nullptr), right_son_(nullptr) {
+		Table<DataType>::DataNode(data), data_(data), left_son_(nullptr), right_son_(nullptr) {
 	}
 
 	template <class DataType>
@@ -95,11 +93,6 @@ namespace AUS2
 		this->left_son_ = nullptr;
 		this->right_son_ = nullptr;
 		this->parent_ = nullptr;
-	}
-
-	template <class DataType>
-	inline DataType &BinarySearchTree<DataType>::BSTNode::data() {
-		return this.data_;
 	}
 
 	template <class DataType>

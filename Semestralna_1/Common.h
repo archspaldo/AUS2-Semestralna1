@@ -1,7 +1,12 @@
 #pragma once
+#include <compare>
 
 namespace AUS2
 {
-	template <class Derived, class Base>
-	concept CheckType = std::is_base_of<Base, Derived>::value;
+	template <class DataType>
+	concept PrimaryKeyProtocol = requires(const DataType & data) {
+		{ data < data } -> std::convertible_to<bool>;
+		{ data > data } -> std::convertible_to<bool>;
+		{ data == data } -> std::convertible_to<bool>;
+	};
 }
