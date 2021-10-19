@@ -146,12 +146,22 @@
     <ClInclude Include="2-3Tree.h" />
     <ClInclude Include="BinarySearchTree.h" />
     <ClInclude Include="Common.h" />
-    <ClInclude Include="Comparator.h" />
+    <ClInclude Include="Controller.h" />
+    <ClInclude Include="DataItems.h" />
+    <ClInclude Include="DataStorage.h" />
+    <ClInclude Include="Factory.h" />
     <ClInclude Include="Iterator.h" />
     <ClInclude Include="Table.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Controller.cpp" />
+    <ClCompile Include="DataItems.cpp" />
+    <ClCompile Include="DataStorage.cpp" />
+    <ClCompile Include="Factory.cpp" />
     <ClCompile Include="main.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="ClassDiagram.cd" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

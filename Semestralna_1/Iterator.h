@@ -7,7 +7,7 @@ class Iterator
 public:
 	virtual ~Iterator();
 	virtual Iterator &operator=(const Iterator &iter) = 0;
-	virtual const int operator==(const Iterator &iter) const = 0;
+	virtual const bool operator==(const Iterator &iter) const = 0;
 	virtual const DataType operator*() const = 0;
 	virtual Iterator &operator++() = 0;
 };
@@ -20,15 +20,16 @@ private:
 public:
 	ProxyIterator(Iterator<DataType> *iterator);
 	virtual ~ProxyIterator();
-	ProxyIterator<DataType> &operator=(const ProxyIterator &iter);
-	const int operator==(const ProxyIterator &iter) const;
+	ProxyIterator<DataType> &operator=(const ProxyIterator<DataType> &iter);
+	const bool operator==(const ProxyIterator<DataType> &iter) const;
 	const DataType operator*() const;
-	const ProxyIterator &operator++();
+	const ProxyIterator<DataType> &operator++();
 };
 
 template <class DataType>
 class IIterable
 {
+public:
 	ProxyIterator<DataType> begin() const;
 	ProxyIterator<DataType> end() const;
 	virtual Iterator<DataType> *begin_iterator() const = 0;
@@ -61,7 +62,7 @@ inline const DataType ProxyIterator<DataType>::operator*() const {
 }
 
 template<class DataType>
-inline const int ProxyIterator<DataType>::operator==(const ProxyIterator &iter) const {
+inline const bool ProxyIterator<DataType>::operator==(const ProxyIterator<DataType> &iter) const {
 	return *this->iterator_ == *iter.iterator_;
 }
 

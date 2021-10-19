@@ -10,8 +10,7 @@ namespace AUS2
 {
 
 	template <PrimaryKeyProtocol KeyType, class DataType>
-	class Table 
-		//: public IIterable<DataType>
+	class Table : public IIterable<DataType>
 	{
 	protected:
 		class DataNode;
