@@ -3,6 +3,8 @@
 #include <Windows.h>
 #include <string>
 #include <ctime>
+#include <sstream>
+#include <iomanip>
 
 namespace AUS2
 {
@@ -12,14 +14,14 @@ namespace AUS2
 		std::string id_;
 		std::string name_;
 		std::string surname_;
-		tm *date_of_birth_;
 	public:
-		Person(const std::string &id, const std::string &name, const std::string &surname, tm *date_of_birth);
+		Person(const std::string &id, const std::string &name, const std::string &surname);
 		~Person();
 		const std::string &id();
 		const std::string &name();
 		const std::string &surname();
-		const tm *date_of_birth();
+		const std::string date_of_birth();
+		std::string string_representation();
 	};
 
 	class Test
@@ -35,7 +37,7 @@ namespace AUS2
 		std::string comment_;
 	public:
 		Test(const std::string &uuid, Person *person, const int &district,
-			const int &county, const bool &result,
+			const int &county, const int &station,  const bool &result,
 			tm *date_of_test, const std::string &comment);
 		~Test();
 		const std::string &uuid();
@@ -46,5 +48,6 @@ namespace AUS2
 		const bool result();
 		const tm *date_of_test();
 		const std::string &comment();
+		std::string string_representation();
 	};
 }

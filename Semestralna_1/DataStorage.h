@@ -29,5 +29,7 @@ namespace AUS2
 		std::list<Test *> *test_list_by_county(bool positive_only, const int county, const tm *date, const tm *date_end);
 		std::list<Test *> *test_list_by_district(bool positive_only, const int district, const tm *date, const tm *date_end);
 		std::list<Test *> *test_list_by_station(const int station, const tm *date, const tm *date_end);
+		TwoThreeTree<const std::string &, Person *> *person();
+		TwoThreeTree<const std::string &, Test *> *test();
 	};
 }

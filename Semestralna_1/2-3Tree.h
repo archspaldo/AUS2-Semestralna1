@@ -89,7 +89,7 @@ namespace AUS2
 		TwoThreeTableIterator(TwoThreeTree<KeyType, DataType>::TwoThreeTableNode *position);
 		virtual ~TwoThreeTableIterator();
 		virtual Iterator<DataType> &operator=(const Iterator<DataType> &iter) override;
-		virtual const bool operator==(const Iterator<DataType> &iter) const override;
+		virtual const bool operator!=(const Iterator<DataType> &iter) const override;
 		virtual const DataType operator*() const override;
 		virtual Iterator<DataType> &operator++() override;
 	};
@@ -142,8 +142,10 @@ namespace AUS2
 		if (this->root_) {
 			queue.push_back(this->root_);
 			while (!queue.empty()) {
-				for (int i = 0; i < queue.front()->data_node_count() + 1; i++) {
-					queue.push_back(queue.front()->child_by_index(i));
+				if (!queue.front()->is_leaf()) {
+					for (int i = 0; i < queue.front()->data_node_count() + 1; i++) {
+						queue.push_back(queue.front()->child_by_index(i));
+					}
 				}
 				delete queue.front();
 				queue.pop_front();
@@ -624,8 +626,10 @@ namespace AUS2
 			TwoThreeTableNode *current;
 			queue.push_back(position);
 			while (!queue.empty()) {
-				for (int i = 0; i < queue.front()->data_node_count() + 1; i++) {
-					queue.push_back(queue.front()->child_by_index(i));
+				if (!queue.front()->is_leaf()) {
+					for (int i = 0; i < queue.front()->data_node_count() + 1; i++) {
+						queue.push_back(queue.front()->child_by_index(i));
+					}
 				}
 				for (int i = 0; i < queue.front()->data_node_count(); i++) {
 					this->path_->push_back(queue.front()->data_by_index(i));
@@ -652,10 +656,10 @@ namespace AUS2
 	}
 
 	template<PrimaryKeyProtocol KeyType, class DataType>
-	inline const bool TwoThreeTree<KeyType, DataType>::TwoThreeTableIterator::operator==(const Iterator<DataType> &iter) const
+	inline const bool TwoThreeTree<KeyType, DataType>::TwoThreeTableIterator::operator!=(const Iterator<DataType> &iter) const
 	{
-		return this->path_->empty() && this->path_->size() == ((const TwoThreeTableIterator &)iter).path_->size() &&
-			this->path_->front() == ((const TwoThreeTableIterator &)iter).path_->front();
+		return this->path_->empty() ? false : (this->path_->size() != ((const TwoThreeTableIterator &)iter).path_->size() ||
+			this->path_->front() != ((const TwoThreeTableIterator &)iter).path_->front());
 	}
 
 	template<PrimaryKeyProtocol KeyType, class DataType>

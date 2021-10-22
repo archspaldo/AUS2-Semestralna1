@@ -1,6 +1,7 @@
 #pragma once
 #include "Factory.h"
 #include "DataStorage.h"
+#include <iostream>
 
 namespace AUS2
 {
@@ -11,11 +12,11 @@ namespace AUS2
 	public:
 		Controller();
 		~Controller();
-		void add_person(const std::string &id, const std::string &name, const std::string &surname, tm *date_of_birth);
+		void add_person(const std::string &id, const std::string &name, const std::string &surname);
 		void add_person();
 		void add_test(const std::string &id, const int &district,
-			const int &county, const bool &result,
-			tm *date_of_test, const std::string &comment);
+			const int &county, const int &station, const bool &result,
+			const std::string &date_of_test, const std::string &comment);
 		void add_test();
 		void remove_person(const std::string &id);
 		void remove_test(const std::string &uuid);
@@ -25,5 +26,7 @@ namespace AUS2
 		void test_list_by_county(bool positive_only, const int county, const tm *date, const tm *date_end);
 		void test_list_by_district(bool positive_only, const int district, const tm *date, const tm *date_end);
 		void test_list_by_station(const int station, const tm *date, const tm *date_end);
+		void person();
+		void test();
 	};
 }

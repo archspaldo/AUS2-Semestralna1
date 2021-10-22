@@ -3,7 +3,7 @@
 namespace AUS2
 {
 	DataStorage::DataStorage() :
-		person_(new TwoThreeTree<const std::string &, Person *>()), test_(TwoThreeTree<const std::string &, Test *>()),
+		person_(new TwoThreeTree<const std::string &, Person *>()), test_(new TwoThreeTree<const std::string &, Test *>()),
 		person_test_(new TwoThreeTree<Person *, TwoThreeTree<const tm *, Test *> *>()),
 		date_test_(new TwoThreeTree<const long, TwoThreeTree<bool, TwoThreeTree<const std::string &, Test *> *> *>),
 		county_test_(new TwoThreeTree<const int &, TwoThreeTree<const long, TwoThreeTree<bool, TwoThreeTree<const std::string &, Test *> *> *> *>()),
@@ -17,7 +17,7 @@ namespace AUS2
 		for (auto node : *this->person_) {
 			delete node;
 		}
-		for (auto node : *this->test) {
+		for (auto node : *this->test_) {
 			delete node;
 		}
 		for (auto node : *this->person_test_) {
@@ -59,7 +59,7 @@ namespace AUS2
 		delete this->date_test_;
 		delete this->county_test_;
 		delete this->district_test_;
-		delete this->station_test_
+		delete this->station_test_;
 
 	}
 	void DataStorage::add_person(Person *person)
@@ -106,13 +106,12 @@ namespace AUS2
 	}
 	void DataStorage::remove_person(const std::string &id)
 	{
-		if (this->person_.contains_key(id)) {
-			for (auto node : *this->person_test_->get(this->person_.get(id))) {
+		if (this->person_->contains_key(id)) {
+			for (auto node : *this->person_test_->get(this->person_->get(id))) {
 				this->remove_test(node->uuid());
 			}
-			this->person_test_->remove(this->person_.get(id));
-			delete this->person_->get(id);
-			this->person_->remove(id);
+			this->person_test_->remove(this->person_->get(id));
+			delete this->person_->remove(id);
 		}
 	}
 	void DataStorage::remove_test(const std::string &uuid)
@@ -125,8 +124,7 @@ namespace AUS2
 			this->district_test_->get(test->district())->get(date)->get(test->result())->remove(uuid);
 			this->station_test_->get(test->station())->get(date)->remove(uuid);
 			this->person_test_->get(test->person())->remove(test->date_of_test());
-			delete test;
-			this->test_->remove(uuid);
+			delete this->test_->remove(uuid);
 		}
 	}
 	Person *DataStorage::person_by_id(const std::string &id)
@@ -156,5 +154,13 @@ namespace AUS2
 	std::list<Test *> *DataStorage::test_list_by_station(const int station, const tm *date, const tm *date_end)
 	{
 		return nullptr;
+	}
+	TwoThreeTree<const std::string &, Person *> *DataStorage::person()
+	{
+		return this->person_;
+	}
+	TwoThreeTree<const std::string &, Test *> *DataStorage::test()
+	{
+		return this->test_;
 	}
 }

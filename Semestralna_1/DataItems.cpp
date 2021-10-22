@@ -2,8 +2,8 @@
 
 namespace AUS2
 {
-	Person::Person(const std::string &id, const std::string &name, const std::string &surname, tm *date_of_birth) :
-		id_(id), name_(name), surname_(surname), date_of_birth_(date_of_birth)
+	Person::Person(const std::string &id, const std::string &name, const std::string &surname) :
+		id_(id), name_(name), surname_(surname)
 	{
 	}
 	Person::~Person()
@@ -21,13 +21,28 @@ namespace AUS2
 	{
 		return this->surname_;
 	}
-	const tm *Person::date_of_birth()
+	const std::string Person::date_of_birth()
 	{
-		return this->date_of_birth_;
+		std::string year = this->id_.substr(0, 2), month = this->id_.substr(2, 2);
+		year = year > "90" ? "19" + year : "20" + year;
+		if (month > "50") {
+			month.data()[0] -= 5;
+		}
+		return this->id_.substr(4, 2) + "." + month + "." + year;
 	}
-	Test::Test(const std::string &uuid, Person *person, const int &district, const int &county,
+	std::string Person::string_representation()
+	{
+		std::string output = "";
+		output += "{\n\trodne_cislo: " + this->id_;
+		output += "\n\tmeno: " + this->name_;
+		output += "\n\tpriezvisko: " + this->surname_;
+		output += "\n\tdatum_narodenia: " + this->date_of_birth();
+		output += "\n}";
+		return output;
+	}
+	Test::Test(const std::string &uuid, Person *person, const int &district, const int &county, const int &station,
 		const bool &result, tm *date_of_test, const std::string &comment) :
-		uuid_(uuid), person_(person), district_(district), county_(county), result_(result),
+		uuid_(uuid), person_(person), district_(district), county_(county), station_(station), result_(result),
 		date_of_test_(date_of_test), comment_(comment)
 	{
 	}
@@ -67,6 +82,22 @@ namespace AUS2
 	const std::string &Test::comment()
 	{
 		return this->comment_;
+	}
+	std::string Test::string_representation()
+	{
+		std::string output = "";
+		output += "{\n\tkod: " + this->uuid_;
+		output += "\n\trodne_cislo: " + this->person_->id();
+		output += "\n\tkraj: " + this->county_;
+		output += "\n\tokres: " + this->district_;
+		output += "\n\tstanica: " + this->station_;
+		output += "\n\tdatum_vykonania: " + this->date_of_test_->tm_mday;
+		output += "." + this->date_of_test_->tm_mon;
+		output += "." + this->date_of_test_->tm_year;
+		output += "\n\tvysledok: " + this->result_;
+		output += "\n\tkomentar: " + this->comment_;
+		output += "\n\t}";
+		return output;
 	}
 }
 
