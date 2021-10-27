@@ -1,13 +1,17 @@
 #pragma once
 #include <utility>
+#include <compare>
 #include <concepts>
 #include <list>
 #include <stdexcept>
 #include "Iterator.h"
-#include "Common.h"
 
 namespace AUS2
 {
+	template <class DataType>
+	concept PrimaryKeyProtocol = requires(const DataType & data) {
+		{ data <=> data } -> std::convertible_to<std::strong_ordering>;
+	};
 
 	template <PrimaryKeyProtocol KeyType, class DataType>
 	class Table : public IIterable<DataType>
@@ -24,14 +28,10 @@ namespace AUS2
 		virtual DataType &get(const KeyType &key) = 0;
 		virtual const DataType get(const KeyType &key) const = 0;
 
-		//virtual DataType &get(const KeyType &lower_bound, const KeyType &upper_bound) = 0;
-		//virtual const DataType get(const KeyType &lower_boundr, const KeyType &upper_bound) const = 0;
+		virtual std::list<DataType> *get(const KeyType &lower_bound, const KeyType &upper_bound) = 0;
 
-		//virtual DataType &get(std::list<const IComparator<DataType> &> comparator_list) = 0;
-		//virtual const DataType get(std::list<const IComparator<DataType> &> comparator_list) const = 0;
-
-		//virtual Iterator<DataType> *begin_iterator() const = 0;
-		//virtual Iterator<DataType> *end_iterator() const = 0;
+		virtual Iterator<DataType> *begin_iterator() const  = 0;
+		virtual Iterator<DataType> *end_iterator() const = 0;
 	};
 
 	template <PrimaryKeyProtocol KeyType, class DataType>

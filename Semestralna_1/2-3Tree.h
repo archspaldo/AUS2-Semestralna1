@@ -1,7 +1,7 @@
 #pragma once
 #include <list>
-#include <deque>
 #include <iterator>
+#include <iostream>
 #include "Table.h"
 
 namespace AUS2
@@ -13,6 +13,7 @@ namespace AUS2
 		class TwoThreeTableNode;
 		class TwoThreeTableIterator;
 
+		const bool try_find(const KeyType &key, TwoThreeTableNode *&last_checked, int &layer) const;
 		const bool try_find(const KeyType &key, TwoThreeTableNode *&last_checked) const;
 
 		TwoThreeTableNode *root_;
@@ -31,17 +32,11 @@ namespace AUS2
 		virtual DataType &get(const KeyType &key) override;
 		virtual const DataType get(const KeyType &key) const override;
 
-		//virtual DataType &get(const KeyType &lower_bound, const KeyType &upper_bound) = 0;
-		//virtual const DataType get(const KeyType &lower_boundr, const KeyType &upper_bound) const = 0;
-
-		//virtual DataType &get(std::list<const IComparator<DataType> &> comparator_list) = 0;
-		//virtual const DataType get(std::list<const IComparator<DataType> &> comparator_list) const = 0;
+		virtual std::list<DataType> *get(const KeyType &lower_bound, const KeyType &upper_bound) override;
 
 		virtual Iterator<DataType> *begin_iterator() const override;
 		virtual Iterator<DataType> *end_iterator() const override;
 	};
-
-
 
 	template <PrimaryKeyProtocol KeyType, class DataType>
 	class TwoThreeTree<KeyType, DataType>::TwoThreeTableNode
@@ -64,6 +59,8 @@ namespace AUS2
 		const short index(const KeyType &key) const;
 
 		typename Table<KeyType, DataType>::DataNode *data_node(const KeyType &key);
+
+
 		typename Table<KeyType, DataType>::DataNode *data_by_index(const int order);
 		TwoThreeTableNode *child_node(const KeyType &key);
 		TwoThreeTableNode *child_by_index(const int order);
@@ -71,7 +68,6 @@ namespace AUS2
 		TwoThreeTableNode *parent_node();
 		void parent_node(TwoThreeTableNode *node);
 
-		TwoThreeTableNode *add_node(const KeyType &key, const DataType &data);
 		TwoThreeTableNode *add_node(typename Table<KeyType, DataType>::DataNode *data_node);
 		typename Table<KeyType, DataType>::DataNode *remove_node(const KeyType &key);
 		typename Table<KeyType, DataType>::DataNode *remove_by_index(const int index);
@@ -95,48 +91,52 @@ namespace AUS2
 	};
 
 	template<PrimaryKeyProtocol KeyType, class DataType>
-	inline const bool TwoThreeTree<KeyType, DataType>::try_find(const KeyType &key, TwoThreeTableNode *&last_checked) const
-	{
+	inline const bool TwoThreeTree<KeyType, DataType>::try_find(const KeyType &key, TwoThreeTableNode *&last_checked, int &layer) const {
+		layer = 0;
 		last_checked = this->root_;
 		if (!this->root_) {
 			return false;
 		}
 		bool has_key = last_checked->has_data_node(key);
 		while (!has_key && !last_checked->is_leaf()) {
+			layer++;
 			last_checked = last_checked->child_node(key);
 			has_key = last_checked->has_data_node(key);
 		}
 		return has_key;
 	}
 
+
+
 	template<PrimaryKeyProtocol KeyType, class DataType>
-	inline TwoThreeTree<KeyType, DataType>::TwoThreeTree() :
-		root_(nullptr), size_(0)
-	{
+	inline const bool TwoThreeTree<KeyType, DataType>::try_find(const KeyType &key, TwoThreeTableNode *&last_checked) const {
+		int layer;
+		return this->try_find(key, last_checked, layer);
 	}
 
 	template<PrimaryKeyProtocol KeyType, class DataType>
-	inline TwoThreeTree<KeyType, DataType>::~TwoThreeTree()
-	{
+	inline TwoThreeTree<KeyType, DataType>::TwoThreeTree() :
+		root_(nullptr), size_(0) {
+	}
+
+	template<PrimaryKeyProtocol KeyType, class DataType>
+	inline TwoThreeTree<KeyType, DataType>::~TwoThreeTree() {
 		this->clear();
 	}
 
 	template<PrimaryKeyProtocol KeyType, class DataType>
-	inline const bool TwoThreeTree<KeyType, DataType>::contains_key(const KeyType &key)
-	{
+	inline const bool TwoThreeTree<KeyType, DataType>::contains_key(const KeyType &key) {
 		TwoThreeTableNode *t;
 		return this->try_find(key, t);
 	}
 
 	template<PrimaryKeyProtocol KeyType, class DataType>
-	inline const size_t TwoThreeTree<KeyType, DataType>::size() const
-	{
+	inline const size_t TwoThreeTree<KeyType, DataType>::size() const {
 		return this->size_;
 	}
 
 	template<PrimaryKeyProtocol KeyType, class DataType>
-	inline void TwoThreeTree<KeyType, DataType>::clear()
-	{
+	inline void TwoThreeTree<KeyType, DataType>::clear() {
 		std::list<TwoThreeTableNode *> queue;
 		TwoThreeTableNode *current;
 		if (this->root_) {
@@ -157,17 +157,16 @@ namespace AUS2
 	}
 
 	template<PrimaryKeyProtocol KeyType, class DataType>
-	inline void TwoThreeTree<KeyType, DataType>::insert(const KeyType &key, const DataType &data)
-	{
+	inline void TwoThreeTree<KeyType, DataType>::insert(const KeyType &key, const DataType &data) {
 		if (!this->root_) {
 			this->root_ = new TwoThreeTableNode(key, data);
 		}
 		else {
 			TwoThreeTableNode *target_node;
 			if (this->try_find(key, target_node)) {
-				throw new std::logic_error("Key already in table");
+				throw std::logic_error("Key already in table");
 			}
-			target_node = target_node->add_node(key, data);
+			target_node = target_node->add_node(new typename Table<KeyType, DataType>::DataNode(key, data));
 			if (target_node->data_node_count() == 1) {
 				if (target_node->parent_node()) {
 					bool was_split = true;
@@ -186,11 +185,10 @@ namespace AUS2
 	}
 
 	template<PrimaryKeyProtocol KeyType, class DataType>
-	inline DataType &TwoThreeTree<KeyType, DataType>::remove(const KeyType &key)
-	{
+	inline DataType &TwoThreeTree<KeyType, DataType>::remove(const KeyType &key) {
 		TwoThreeTableNode *target_node;
 		if (!this->try_find(key, target_node)) {
-			throw new std::logic_error("Key not in table");
+			throw std::logic_error("Key not in table");
 		}
 		typename Table<KeyType, DataType>::DataNode *return_value = target_node->data_node(key);
 
@@ -227,46 +225,77 @@ namespace AUS2
 	}
 
 	template<PrimaryKeyProtocol KeyType, class DataType>
-	inline DataType &TwoThreeTree<KeyType, DataType>::get(const KeyType &key)
-	{
+	inline DataType &TwoThreeTree<KeyType, DataType>::get(const KeyType &key) {
+		int layer = 0;
+		TwoThreeTableNode *target_node;
+		if (!this->try_find(key, target_node, layer)) {
+			throw std::logic_error("Key not in table");
+		}
+		if (target_node->is_leaf()) {
+			std::cout << layer << ' ';
+		}
+		return target_node->data_node(key)->data();
+
+	}
+
+	template<PrimaryKeyProtocol KeyType, class DataType>
+	inline const DataType TwoThreeTree<KeyType, DataType>::get(const KeyType &key) const {
 		TwoThreeTableNode *target_node;
 		if (!this->try_find(key, target_node)) {
-			throw new std::logic_error("Key not in table");
+			throw std::logic_error("Key not in table");
 		}
 		return target_node->data_node(key)->data();
 	}
 
 	template<PrimaryKeyProtocol KeyType, class DataType>
-	inline const DataType TwoThreeTree<KeyType, DataType>::get(const KeyType &key) const
-	{
-		TwoThreeTableNode *target_node;
-		if (!this->try_find(key, target_node)) {
-			throw new std::logic_error("Key not in table");
+	inline std::list<DataType> *TwoThreeTree<KeyType, DataType>::get(const KeyType &lower_bound, const KeyType &upper_bound) {
+		std::list<short> *list = new std::list<short>();
+		std::list<DataType> *return_list = new std::list<DataType>();
+		TwoThreeTableNode *current_node = this->root_;
+
+		if (!this->root_) {
+			return return_list;
 		}
-		return target_node->data_node(key)->data();
+
+		while (!current_node->has_data_node(lower_bound) && !current_node->is_leaf()) {
+			list->push_front(current_node->index(lower_bound));
+			current_node = current_node->child_by_index(list->front());
+		}
+		list->push_front(current_node->index(lower_bound));
+
+		while (true) {
+			while (!list->empty() && list->front() == current_node->data_node_count()) {
+				current_node = current_node->parent_node();
+				list->pop_front();
+			}
+			if (list->empty() || current_node->data_by_index(list->front())->key() > upper_bound) {
+				break;
+			}
+			return_list->push_back(current_node->data_by_index(list->front())->data());
+			list->front() += 1;
+			
+			while (!current_node->is_leaf()) {
+				current_node = current_node->child_by_index(list->front());
+				list->push_front(0);
+			}
+		}
+
+		delete list;
+		return return_list;
 	}
 
 	template<PrimaryKeyProtocol KeyType, class DataType>
-	inline Iterator<DataType> *TwoThreeTree<KeyType, DataType>::begin_iterator() const
-	{
+	inline Iterator<DataType> *TwoThreeTree<KeyType, DataType>::begin_iterator() const {
 		return new TwoThreeTableIterator(this->root_);
 	}
 
 	template<PrimaryKeyProtocol KeyType, class DataType>
-	inline Iterator<DataType> *TwoThreeTree<KeyType, DataType>::end_iterator() const
-	{
+	inline Iterator<DataType> *TwoThreeTree<KeyType, DataType>::end_iterator() const {
 		return new TwoThreeTableIterator(nullptr);
 	}
 
 	template<PrimaryKeyProtocol KeyType, class DataType>
-	inline TwoThreeTree<KeyType, DataType>::TwoThreeTableNode *TwoThreeTree<KeyType, DataType>::TwoThreeTableNode::add_node(const KeyType &key, const DataType &data)
-	{
-		return this->add_node(new Table<KeyType, DataType>::DataNode(key, data));
-	}
-
-	template<PrimaryKeyProtocol KeyType, class DataType>
-	inline TwoThreeTree<KeyType, DataType>::TwoThreeTableNode *TwoThreeTree<KeyType, DataType>::TwoThreeTableNode::add_node(typename Table<KeyType, DataType>::DataNode *data_node)
-	{
+	inline TwoThreeTree<KeyType, DataType>::TwoThreeTableNode *TwoThreeTree<KeyType, DataType>::TwoThreeTableNode::add_node(typename Table<KeyType, DataType>::DataNode *data_node) {
 		if (this->data_node_count() <= 1) {
 			if (this->data_node_count() == 0 || data_node->key() < this->data_nodes_->front()->key()) {
 				this->data_nodes_->push_front(data_node);
@@ -301,8 +330,7 @@ namespace AUS2
 	}
 
 	template<PrimaryKeyProtocol KeyType, class DataType>
-	inline typename Table<KeyType, DataType>::DataNode *TwoThreeTree<KeyType, DataType>::TwoThreeTableNode::remove_node(const KeyType &key)
-	{
+	inline typename Table<KeyType, DataType>::DataNode *TwoThreeTree<KeyType, DataType>::TwoThreeTableNode::remove_node(const KeyType &key) {
 		for (typename Table<KeyType, DataType>::DataNode *node : *this->data_nodes_) {
 			if (node->key() == key) {
 				this->data_nodes_->remove(node);
@@ -313,8 +341,7 @@ namespace AUS2
 	}
 
 	template<PrimaryKeyProtocol KeyType, class DataType>
-	inline typename Table<KeyType, DataType>::DataNode *TwoThreeTree<KeyType, DataType>::TwoThreeTableNode::remove_by_index(const int index)
-	{
+	inline typename Table<KeyType, DataType>::DataNode *TwoThreeTree<KeyType, DataType>::TwoThreeTableNode::remove_by_index(const int index) {
 		typename std::list<typename Table<KeyType, DataType>::DataNode *>::iterator it = this->data_nodes_->begin();
 		std::ranges::advance(it, index);
 		typename Table<KeyType, DataType>::DataNode *return_value = *it;
@@ -323,8 +350,7 @@ namespace AUS2
 	}
 
 	template<PrimaryKeyProtocol KeyType, class DataType>
-	inline TwoThreeTree<KeyType, DataType>::TwoThreeTableNode *TwoThreeTree<KeyType, DataType>::TwoThreeTableNode::add_and_split(TwoThreeTableNode *node, bool &was_split)
-	{
+	inline TwoThreeTree<KeyType, DataType>::TwoThreeTableNode *TwoThreeTree<KeyType, DataType>::TwoThreeTableNode::add_and_split(TwoThreeTableNode *node, bool &was_split) {
 		if (this->data_node_count() == 1) {
 			if (node->data_nodes_->front()->key() < this->data_nodes_->front()->key()) {
 				this->data_nodes_->push_front(node->data_nodes_->front());
@@ -393,8 +419,7 @@ namespace AUS2
 	}
 
 	template<PrimaryKeyProtocol KeyType, class DataType>
-	inline TwoThreeTree<KeyType, DataType>::TwoThreeTableNode *TwoThreeTree<KeyType, DataType>::TwoThreeTableNode::remove_and_merge(TwoThreeTableNode *node)
-	{
+	inline TwoThreeTree<KeyType, DataType>::TwoThreeTableNode *TwoThreeTree<KeyType, DataType>::TwoThreeTableNode::remove_and_merge(TwoThreeTableNode *node) {
 		int index = 0;
 		for (TwoThreeTableNode *child : *this->children_) {
 			if (child == node) {
@@ -435,8 +460,7 @@ namespace AUS2
 	}
 
 	template<PrimaryKeyProtocol KeyType, class DataType>
-	inline void TwoThreeTree<KeyType, DataType>::TwoThreeTableNode::rotate_left(const int index)
-	{
+	inline void TwoThreeTree<KeyType, DataType>::TwoThreeTableNode::rotate_left(const int index) {
 		typename std::list<typename Table<KeyType, DataType>::DataNode *>::iterator it = this->data_nodes_->begin();
 		std::ranges::advance(it, index);
 		TwoThreeTableNode *left_child = this->child_by_index(index), *right_child = this->child_by_index(index + 1);
@@ -458,8 +482,7 @@ namespace AUS2
 	}
 
 	template<PrimaryKeyProtocol KeyType, class DataType>
-	inline void TwoThreeTree<KeyType, DataType>::TwoThreeTableNode::rotate_right(const int index)
-	{
+	inline void TwoThreeTree<KeyType, DataType>::TwoThreeTableNode::rotate_right(const int index) {
 		typename std::list<typename Table<KeyType, DataType>::DataNode *>::iterator it = this->data_nodes_->begin();
 		std::ranges::advance(it, index);
 		TwoThreeTableNode *left_child = this->child_by_index(index), *right_child = this->child_by_index(index + 1);
@@ -482,20 +505,17 @@ namespace AUS2
 
 	template<PrimaryKeyProtocol KeyType, class DataType>
 	inline TwoThreeTree<KeyType, DataType>::TwoThreeTableNode::TwoThreeTableNode() :
-		parent_(nullptr), data_nodes_(new std::list<typename Table<KeyType, DataType>::DataNode *>()), children_(new std::list<TwoThreeTableNode *>())
-	{
+		parent_(nullptr), data_nodes_(new std::list<typename Table<KeyType, DataType>::DataNode *>()), children_(new std::list<TwoThreeTableNode *>()) {
 	}
 
 	template<PrimaryKeyProtocol KeyType, class DataType>
 	inline TwoThreeTree<KeyType, DataType>::TwoThreeTableNode::TwoThreeTableNode(const KeyType &key, const DataType &data) :
-		parent_(nullptr), data_nodes_(new std::list<typename Table<KeyType, DataType>::DataNode *>()), children_(new std::list<TwoThreeTableNode *>())
-	{
+		parent_(nullptr), data_nodes_(new std::list<typename Table<KeyType, DataType>::DataNode *>()), children_(new std::list<TwoThreeTableNode *>()) {
 		this->data_nodes_->push_back(new Table<KeyType, DataType>::DataNode(key, data));
 	}
 
 	template<PrimaryKeyProtocol KeyType, class DataType>
-	inline TwoThreeTree<KeyType, DataType>::TwoThreeTableNode::~TwoThreeTableNode()
-	{
+	inline TwoThreeTree<KeyType, DataType>::TwoThreeTableNode::~TwoThreeTableNode() {
 		this->parent_ = nullptr;
 		this->children_->clear();
 		for (auto node : *this->data_nodes_) {
@@ -505,14 +525,12 @@ namespace AUS2
 	}
 
 	template<PrimaryKeyProtocol KeyType, class DataType>
-	inline const bool TwoThreeTree<KeyType, DataType>::TwoThreeTableNode::is_leaf() const
-	{
+	inline const bool TwoThreeTree<KeyType, DataType>::TwoThreeTableNode::is_leaf() const {
 		return this->children_->size() == 0;
 	}
 
 	template<PrimaryKeyProtocol KeyType, class DataType>
-	inline const bool TwoThreeTree<KeyType, DataType>::TwoThreeTableNode::has_data_node(const KeyType &key) const
-	{
+	inline const bool TwoThreeTree<KeyType, DataType>::TwoThreeTableNode::has_data_node(const KeyType &key) const {
 		for (typename Table<KeyType, DataType>::DataNode *node : *this->data_nodes_) {
 			if (node->key() == key) {
 				return true;
@@ -522,27 +540,24 @@ namespace AUS2
 	}
 
 	template<PrimaryKeyProtocol KeyType, class DataType>
-	inline const short TwoThreeTree<KeyType, DataType>::TwoThreeTableNode::data_node_count() const
-	{
+	inline const short TwoThreeTree<KeyType, DataType>::TwoThreeTableNode::data_node_count() const {
 		return this->data_nodes_->size();
 	}
 
 	template<PrimaryKeyProtocol KeyType, class DataType>
-	inline const short TwoThreeTree<KeyType, DataType>::TwoThreeTableNode::index(const KeyType &key) const
-	{
+	inline const short TwoThreeTree<KeyType, DataType>::TwoThreeTableNode::index(const KeyType &key) const {
 		short index = 0;
 		for (typename Table<KeyType, DataType>::DataNode *node : *this->data_nodes_) {
-			if (node->key() == key) {
+			if (key <= node->key()) {
 				return index;
 			}
 			index++;
 		}
-		return -1;
+		return (const short)index;
 	}
 
 	template<PrimaryKeyProtocol KeyType, class DataType>
-	inline typename Table<KeyType, DataType>::DataNode *TwoThreeTree<KeyType, DataType>::TwoThreeTableNode::data_node(const KeyType &key)
-	{
+	inline typename Table<KeyType, DataType>::DataNode *TwoThreeTree<KeyType, DataType>::TwoThreeTableNode::data_node(const KeyType &key) {
 		for (typename Table<KeyType, DataType>::DataNode *node : *this->data_nodes_) {
 			if (node->key() == key) {
 				return node;
@@ -552,8 +567,7 @@ namespace AUS2
 	}
 
 	template<PrimaryKeyProtocol KeyType, class DataType>
-	inline typename Table<KeyType, DataType>::DataNode *TwoThreeTree<KeyType, DataType>::TwoThreeTableNode::data_by_index(const int order)
-	{
+	inline typename Table<KeyType, DataType>::DataNode *TwoThreeTree<KeyType, DataType>::TwoThreeTableNode::data_by_index(const int order) {
 		if (this->data_nodes_->size() == 0) {
 			return nullptr;
 		}
@@ -564,8 +578,7 @@ namespace AUS2
 	}
 
 	template<PrimaryKeyProtocol KeyType, class DataType>
-	inline TwoThreeTree<KeyType, DataType>::TwoThreeTableNode *TwoThreeTree<KeyType, DataType>::TwoThreeTableNode::child_node(const KeyType &key)
-	{
+	inline TwoThreeTree<KeyType, DataType>::TwoThreeTableNode *TwoThreeTree<KeyType, DataType>::TwoThreeTableNode::child_node(const KeyType &key) {
 		if (this->is_leaf()) {
 			return nullptr;
 		}
@@ -580,8 +593,7 @@ namespace AUS2
 	}
 
 	template<PrimaryKeyProtocol KeyType, class DataType>
-	inline TwoThreeTree<KeyType, DataType>::TwoThreeTableNode *TwoThreeTree<KeyType, DataType>::TwoThreeTableNode::child_by_index(const int order)
-	{
+	inline TwoThreeTree<KeyType, DataType>::TwoThreeTableNode *TwoThreeTree<KeyType, DataType>::TwoThreeTableNode::child_by_index(const int order) {
 		if (this->is_leaf()) {
 			return nullptr;
 		}
@@ -597,8 +609,7 @@ namespace AUS2
 	}
 
 	template<PrimaryKeyProtocol KeyType, class DataType>
-	inline void TwoThreeTree<KeyType, DataType>::TwoThreeTableNode::remove_child_by_index(const int index)
-	{
+	inline void TwoThreeTree<KeyType, DataType>::TwoThreeTableNode::remove_child_by_index(const int index) {
 		typename std::list<TwoThreeTableNode *>::iterator it = this->children_->begin();
 		std::ranges::advance(it, index);
 		TwoThreeTableNode *return_value = *it;
@@ -606,21 +617,18 @@ namespace AUS2
 	}
 
 	template<PrimaryKeyProtocol KeyType, class DataType>
-	inline TwoThreeTree<KeyType, DataType>::TwoThreeTableNode *TwoThreeTree<KeyType, DataType>::TwoThreeTableNode::parent_node()
-	{
+	inline TwoThreeTree<KeyType, DataType>::TwoThreeTableNode *TwoThreeTree<KeyType, DataType>::TwoThreeTableNode::parent_node() {
 		return this->parent_;
 	}
 
 	template<PrimaryKeyProtocol KeyType, class DataType>
-	inline void TwoThreeTree<KeyType, DataType>::TwoThreeTableNode::parent_node(TwoThreeTableNode *node)
-	{
+	inline void TwoThreeTree<KeyType, DataType>::TwoThreeTableNode::parent_node(TwoThreeTableNode *node) {
 		this->parent_ = node;
 	}
 
 	template<PrimaryKeyProtocol KeyType, class DataType>
 	inline TwoThreeTree<KeyType, DataType>::TwoThreeTableIterator::TwoThreeTableIterator(TwoThreeTree<KeyType, DataType>::TwoThreeTableNode *position) :
-		path_(new std::list<typename Table<KeyType, DataType>::DataNode *>())
-	{
+		path_(new std::list<typename Table<KeyType, DataType>::DataNode *>()) {
 		if (position) {
 			std::list<TwoThreeTableNode *> queue;
 			TwoThreeTableNode *current;
@@ -641,36 +649,31 @@ namespace AUS2
 	}
 
 	template<PrimaryKeyProtocol KeyType, class DataType>
-	inline TwoThreeTree<KeyType, DataType>::TwoThreeTableIterator::~TwoThreeTableIterator()
-	{
+	inline TwoThreeTree<KeyType, DataType>::TwoThreeTableIterator::~TwoThreeTableIterator() {
 		this->path_->clear();
 		delete this->path_;
 	}
 
 	template<PrimaryKeyProtocol KeyType, class DataType>
-	inline Iterator<DataType> &TwoThreeTree<KeyType, DataType>::TwoThreeTableIterator::operator=(const Iterator<DataType> &iter)
-	{
+	inline Iterator<DataType> &TwoThreeTree<KeyType, DataType>::TwoThreeTableIterator::operator=(const Iterator<DataType> &iter) {
 		if (this != &iter)
 			*this->path_ = *((const TwoThreeTableIterator &)iter).path_;
 		return *this;
 	}
 
 	template<PrimaryKeyProtocol KeyType, class DataType>
-	inline const bool TwoThreeTree<KeyType, DataType>::TwoThreeTableIterator::operator!=(const Iterator<DataType> &iter) const
-	{
+	inline const bool TwoThreeTree<KeyType, DataType>::TwoThreeTableIterator::operator!=(const Iterator<DataType> &iter) const {
 		return this->path_->empty() ? false : (this->path_->size() != ((const TwoThreeTableIterator &)iter).path_->size() ||
 			this->path_->front() != ((const TwoThreeTableIterator &)iter).path_->front());
 	}
 
 	template<PrimaryKeyProtocol KeyType, class DataType>
-	inline const DataType TwoThreeTree<KeyType, DataType>::TwoThreeTableIterator::operator*() const
-	{
+	inline const DataType TwoThreeTree<KeyType, DataType>::TwoThreeTableIterator::operator*() const {
 		return this->path_->front()->data();
 	}
 
 	template<PrimaryKeyProtocol KeyType, class DataType>
-	inline Iterator<DataType> &TwoThreeTree<KeyType, DataType>::TwoThreeTableIterator::operator++()
-	{
+	inline Iterator<DataType> &TwoThreeTree<KeyType, DataType>::TwoThreeTableIterator::operator++() {
 		this->path_->pop_front();
 		return *this;
 	}
