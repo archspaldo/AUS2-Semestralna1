@@ -30,7 +30,7 @@ namespace AUS2
 
 		virtual std::list<DataType> *get(const KeyType &lower_bound, const KeyType &upper_bound) = 0;
 
-		virtual Iterator<DataType> *begin_iterator() const  = 0;
+		virtual Iterator<DataType> *begin_iterator() const = 0;
 		virtual Iterator<DataType> *end_iterator() const = 0;
 	};
 
@@ -50,9 +50,8 @@ namespace AUS2
 	};
 
 	template <PrimaryKeyProtocol KeyType, class DataType>
-	inline Table<KeyType, DataType>::DataNode::DataNode(const KeyType& key,const DataType &data) :
-		key_(key), data_(data)
-	{
+	inline Table<KeyType, DataType>::DataNode::DataNode(const KeyType &key, const DataType &data) :
+		key_(key), data_(data) {
 	}
 
 	template <PrimaryKeyProtocol KeyType, class DataType>

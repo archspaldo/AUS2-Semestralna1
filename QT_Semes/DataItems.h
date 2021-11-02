@@ -15,7 +15,7 @@ namespace AUS2
 		std::string name_;
 		std::string surname_;
 	public:
-		Person(const std::string &id, const std::string &name, const std::string &surname);
+		Person(const std::string id, const std::string name, const std::string surname);
 		~Person();
 		const std::string &id();
 		const std::string &name();
@@ -36,9 +36,9 @@ namespace AUS2
 		tm *date_of_test_;
 		std::string comment_;
 	public:
-		Test(const std::string &uuid, Person *person, const int &district,
-			const int &county, const int &station,  const bool &result,
-			tm *date_of_test, const std::string &comment);
+		Test(const std::string uuid, Person *person, const int county, const int district,
+			const int station, const bool result,
+			tm *date_of_test, const std::string comment);
 		~Test();
 		const std::string &uuid();
 		Person *person();
@@ -48,6 +48,7 @@ namespace AUS2
 		const bool result();
 		const tm *date_of_test();
 		const std::string &comment();
+		const std::string date();
 		std::string string_representation();
 	};
 }

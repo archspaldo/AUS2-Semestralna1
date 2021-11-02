@@ -42,8 +42,7 @@ inline Iterator<DataType>::~Iterator() {
 
 template<class DataType>
 inline ProxyIterator<DataType>::ProxyIterator(Iterator<DataType> *iterator) :
-	iterator_(iterator)
-{
+	iterator_(iterator) {
 }
 
 template<class DataType>
@@ -75,8 +74,6 @@ inline const ProxyIterator<DataType> &ProxyIterator<DataType>::operator++() {
 	}
 	return *this;
 }
-
-
 
 template<class DataType>
 inline ProxyIterator<DataType> IIterable<DataType>::begin() const {

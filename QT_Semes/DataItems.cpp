@@ -2,7 +2,7 @@
 
 namespace AUS2
 {
-	Person::Person(const std::string &id, const std::string &name, const std::string &surname) :
+	Person::Person(const std::string id, const std::string name, const std::string surname) :
 		id_(id), name_(name), surname_(surname)
 	{
 	}
@@ -24,7 +24,7 @@ namespace AUS2
 	const std::string Person::date_of_birth()
 	{
 		std::string year = this->id_.substr(0, 2), month = this->id_.substr(2, 2);
-		year = year > "90" ? "19" + year : "20" + year;
+		year = std::to_string(1900 + std::stoi(year));
 		if (month > "50") {
 			month.data()[0] -= 5;
 		}
@@ -40,8 +40,8 @@ namespace AUS2
 		output += "\n}";
 		return output;
 	}
-	Test::Test(const std::string &uuid, Person *person, const int &district, const int &county, const int &station,
-		const bool &result, tm *date_of_test, const std::string &comment) :
+	Test::Test(const std::string uuid, Person *person, const int county, const int district, const int station,
+		const bool result, tm *date_of_test, const std::string comment) :
 		uuid_(uuid), person_(person), district_(district), county_(county), station_(station), result_(result),
 		date_of_test_(date_of_test), comment_(comment)
 	{
@@ -82,6 +82,11 @@ namespace AUS2
 	const std::string &Test::comment()
 	{
 		return this->comment_;
+	}
+	const std::string Test::date() {
+		char buff[100];
+		std::strftime(buff, 100, "%d.%m.%Y %H:%M:%S", this->date_of_test_);
+		return std::string(buff);
 	}
 	std::string Test::string_representation()
 	{

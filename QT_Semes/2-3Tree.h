@@ -60,7 +60,6 @@ namespace AUS2
 
 		typename Table<KeyType, DataType>::DataNode *data_node(const KeyType &key);
 
-
 		typename Table<KeyType, DataType>::DataNode *data_by_index(const int order);
 		TwoThreeTableNode *child_node(const KeyType &key);
 		TwoThreeTableNode *child_by_index(const int order);
@@ -105,8 +104,6 @@ namespace AUS2
 		}
 		return has_key;
 	}
-
-
 
 	template<PrimaryKeyProtocol KeyType, class DataType>
 	inline const bool TwoThreeTree<KeyType, DataType>::try_find(const KeyType &key, TwoThreeTableNode *&last_checked) const {
@@ -164,7 +161,7 @@ namespace AUS2
 		else {
 			TwoThreeTableNode *target_node;
 			if (this->try_find(key, target_node)) {
-				throw std::logic_error("Key already in table");
+				throw std::exception("Key already in table");
 			}
 			target_node = target_node->add_node(new typename Table<KeyType, DataType>::DataNode(key, data));
 			if (target_node->data_node_count() == 1) {
@@ -188,7 +185,7 @@ namespace AUS2
 	inline DataType &TwoThreeTree<KeyType, DataType>::remove(const KeyType &key) {
 		TwoThreeTableNode *target_node;
 		if (!this->try_find(key, target_node)) {
-			throw std::logic_error("Key not in table");
+			throw std::exception("Key not in table");
 		}
 		typename Table<KeyType, DataType>::DataNode *return_value = target_node->data_node(key);
 
@@ -226,23 +223,18 @@ namespace AUS2
 
 	template<PrimaryKeyProtocol KeyType, class DataType>
 	inline DataType &TwoThreeTree<KeyType, DataType>::get(const KeyType &key) {
-		int layer = 0;
 		TwoThreeTableNode *target_node;
-		if (!this->try_find(key, target_node, layer)) {
-			throw std::logic_error("Key not in table");
-		}
-		if (target_node->is_leaf()) {
-			std::cout << layer << ' ';
+		if (!this->try_find(key, target_node)) {
+			throw std::exception("Key not in table");
 		}
 		return target_node->data_node(key)->data();
-
 	}
 
 	template<PrimaryKeyProtocol KeyType, class DataType>
 	inline const DataType TwoThreeTree<KeyType, DataType>::get(const KeyType &key) const {
 		TwoThreeTableNode *target_node;
 		if (!this->try_find(key, target_node)) {
-			throw std::logic_error("Key not in table");
+			throw std::exception("Key not in table");
 		}
 		return target_node->data_node(key)->data();
 	}
@@ -273,7 +265,7 @@ namespace AUS2
 			}
 			return_list->push_back(current_node->data_by_index(list->front())->data());
 			list->front() += 1;
-			
+
 			while (!current_node->is_leaf()) {
 				current_node = current_node->child_by_index(list->front());
 				list->push_front(0);
@@ -454,7 +446,6 @@ namespace AUS2
 			else {
 				this->rotate_right(index);
 			}
-
 		}
 		return this;
 	}
@@ -631,7 +622,6 @@ namespace AUS2
 		path_(new std::list<typename Table<KeyType, DataType>::DataNode *>()) {
 		if (position) {
 			std::list<TwoThreeTableNode *> queue;
-			TwoThreeTableNode *current;
 			queue.push_back(position);
 			while (!queue.empty()) {
 				if (!queue.front()->is_leaf()) {
@@ -644,7 +634,6 @@ namespace AUS2
 				}
 				queue.pop_front();
 			}
-
 		}
 	}
 
@@ -677,5 +666,4 @@ namespace AUS2
 		this->path_->pop_front();
 		return *this;
 	}
-
 }

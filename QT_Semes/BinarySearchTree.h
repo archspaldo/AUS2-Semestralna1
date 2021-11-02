@@ -32,7 +32,7 @@ namespace AUS2
 		virtual Iterator<DataType> *begin_iterator() const;
 		virtual Iterator<DataType> *end_iterator() const;
 
-		void 
+		void
 	private:
 		BSTNode *root_;
 		size_t size_;
@@ -73,13 +73,11 @@ namespace AUS2
 		virtual void populate_path() = 0;
 	private:
 		std::queue<BinarySearchTree<DataType>::BSTNode *, std::list<BinarySearchTree<DataType>::BSTNode *>> path_;
-
 	};
 
 	template <class DataType>
 	class BinarySearchTree<DataType>::InOrderTreeIterator : public BinarySearchTree<DataType>::TreeIterator
 	{
-
 	};
 
 #pragma region BSTIItem definition
@@ -313,4 +311,3 @@ namespace AUS2
 	}
 }
 #pragma endregion
-
