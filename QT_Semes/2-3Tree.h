@@ -30,7 +30,7 @@ namespace AUS2
 		virtual DataType &remove(const KeyType &key) override;
 
 		virtual DataType &get(const KeyType &key) override;
-		virtual const DataType get(const KeyType &key) const override;
+		virtual const DataType get(const KeyType &key) const override; 
 
 		virtual std::list<DataType> *get(const KeyType &lower_bound, const KeyType &upper_bound) override;
 
@@ -154,7 +154,7 @@ namespace AUS2
 	}
 
 	template<PrimaryKeyProtocol KeyType, class DataType>
-	inline void TwoThreeTree<KeyType, DataType>::insert(const KeyType &key, const DataType &data) {
+	inline void TwoThreeTree<KeyType, DataType>::insert(const KeyType &key, const DataType &data) noexcept(false) {
 		if (!this->root_) {
 			this->root_ = new TwoThreeTableNode(key, data);
 		}
@@ -182,7 +182,7 @@ namespace AUS2
 	}
 
 	template<PrimaryKeyProtocol KeyType, class DataType>
-	inline DataType &TwoThreeTree<KeyType, DataType>::remove(const KeyType &key) {
+	inline DataType &TwoThreeTree<KeyType, DataType>::remove(const KeyType &key) noexcept(false) {
 		TwoThreeTableNode *target_node;
 		if (!this->try_find(key, target_node)) {
 			throw std::exception("Key not in table");
@@ -222,7 +222,7 @@ namespace AUS2
 	}
 
 	template<PrimaryKeyProtocol KeyType, class DataType>
-	inline DataType &TwoThreeTree<KeyType, DataType>::get(const KeyType &key) {
+	inline DataType &TwoThreeTree<KeyType, DataType>::get(const KeyType &key) noexcept(false) {
 		TwoThreeTableNode *target_node;
 		if (!this->try_find(key, target_node)) {
 			throw std::exception("Key not in table");
@@ -231,7 +231,7 @@ namespace AUS2
 	}
 
 	template<PrimaryKeyProtocol KeyType, class DataType>
-	inline const DataType TwoThreeTree<KeyType, DataType>::get(const KeyType &key) const {
+	inline const DataType TwoThreeTree<KeyType, DataType>::get(const KeyType &key) const noexcept(false) {
 		TwoThreeTableNode *target_node;
 		if (!this->try_find(key, target_node)) {
 			throw std::exception("Key not in table");

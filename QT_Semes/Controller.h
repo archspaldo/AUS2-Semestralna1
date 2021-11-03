@@ -24,10 +24,10 @@ namespace AUS2
 		~Controller();
 		Person* add_person(const std::string id, const std::string name, const std::string surname);
 		Person *add_person();
-		void add_test(const std::string uuid, const std::string id, const int district,
-			const int county, const int station, const bool result,
+		Test* add_test(const std::string id, const int county, 
+			const int district, const int station, const bool result,
 			const std::string date_of_test, const std::string comment);
-		void add_test(const std::string id);
+		Test* add_test(const std::string id);
 		void remove_person(const std::string &id);
 		void remove_test(const std::string &uuid);
 		Person *person_by_id(const std::string &id);

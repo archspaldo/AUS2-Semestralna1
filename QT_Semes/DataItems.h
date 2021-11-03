@@ -21,7 +21,6 @@ namespace AUS2
 		const std::string &name();
 		const std::string &surname();
 		const std::string date_of_birth();
-		std::string string_representation();
 	};
 
 	class Test
@@ -49,6 +48,5 @@ namespace AUS2
 		const tm *date_of_test();
 		const std::string &comment();
 		const std::string date();
-		std::string string_representation();
 	};
 }

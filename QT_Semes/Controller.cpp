@@ -32,7 +32,9 @@ namespace AUS2
     Person *Controller::add_person(const std::string id, const std::string name, const std::string surname)
     {
         Person *person = new Person(id, name, surname);
-        this->storage_->add_person(person);
+        if (!this->storage_->add_person(person)) {
+            return nullptr;
+        }
         return person;
     }
 
@@ -60,32 +62,50 @@ namespace AUS2
         std::string surname = (*this->surnames_)[rand() % this->surnames_->size()];
 
         Person *person = new Person(id, name, surname);
-        this->storage_->add_person(person);
+        if (!this->storage_->add_person(person)) {
+            return nullptr;
+        }
         return person;
     }
 
-    void Controller::add_test(const std::string uuid, const std::string id, const int district, const int county, const int station, const bool result, const std::string date_of_test, const std::string comment)
+    Test * Controller::add_test(const std::string id, const int county, const int district, const int station, const bool result, const std::string date_of_test, const std::string comment)
     {
-        struct tm *date = new tm;
-        std::istringstream ss{ date_of_test };
-        ss >> std::get_time(date, "%d.%m.%Y %H:%M:%S");
         Person *person = this->storage_->person_by_id(id);
-        this->storage_->add_test(new Test(uuid, person, district, county, station, result, date, comment));
+        Test *test = nullptr;
+        if (person) {
+            std::string uuid = boost::lexical_cast<std::string>(boost::uuids::random_generator()());
+            struct tm *date = new tm;
+            std::istringstream ss{ date_of_test };
+            ss >> std::get_time(date, "%d.%m.%Y %H:%M:%S");
+            test = new Test(uuid, person, district, county, station, result, date, comment);
+            if (!this->storage_->add_test(test)) {
+                return nullptr;
+            }
+        }
+        return test;
     }
 
-    void Controller::add_test(const std::string id)
+    Test * Controller::add_test(const std::string id)
     {
-        std::string uuid = boost::lexical_cast<std::string>(boost::uuids::random_generator()());
-
-        std::string str_date = "", tmp;
-        str_date += std::to_string((rand() % 28) + 1) + "." + std::to_string((rand() % 12) + 1) + ".2021 ";
-        str_date += std::to_string((rand() % 9) + 7) + ':' + std::to_string(rand() % 60) + ':' + std::to_string(rand() % 60);
-
-        struct tm *date = new tm;
-        std::istringstream ss{ str_date };
-        ss >> std::get_time(date, "%d.%m.%Y %H:%M:%S");
         Person *person = this->storage_->person_by_id(id);
-        this->storage_->add_test(new Test(uuid, person, rand() % 10, rand() % 60, rand() % 300, rand() % 2, date, ""));
+        Test *test = nullptr;
+        if (person) {
+            std::string uuid = boost::lexical_cast<std::string>(boost::uuids::random_generator()());
+
+            std::string str_date = "", tmp;
+            str_date += std::to_string((rand() % 28) + 1) + "." + std::to_string((rand() % 12) + 1) + ".2021 ";
+            str_date += std::to_string((rand() % 9) + 7) + ':' + std::to_string(rand() % 60) + ':' + std::to_string(rand() % 60);
+
+            struct tm *date = new tm;
+            std::istringstream ss{ str_date };
+            ss >> std::get_time(date, "%d.%m.%Y %H:%M:%S");
+
+            test = new Test(uuid, person, rand() % 10, rand() % 60, rand() % 300, rand() % 2, date, "");
+            if (!this->storage_->add_test(test)) {
+                return nullptr;
+            }
+        }
+        return test;
     }
 
     void Controller::remove_person(const std::string &id)

@@ -4,7 +4,7 @@ namespace AUS2
 {
 	DataStorage::DataStorage() :
 		person_(new TwoThreeTree<const std::string &, Person *>()), test_(new TwoThreeTree<const std::string &, Test *>()),
-		person_test_(new TwoThreeTree<const std::string &, TwoThreeTree<const tm *, Test *> *>()),
+		person_test_(new TwoThreeTree<const std::string &, TwoThreeTree<const time_t, Test *> *>()),
 		date_test_(new TwoThreeTree<const time_t, TwoThreeTree<bool, TwoThreeTree<const std::string &, Test *> *> *>),
 		county_test_(new TwoThreeTree<const int, TwoThreeTree<const time_t, TwoThreeTree<bool, TwoThreeTree<const std::string &, Test *> *> *> *>()),
 		district_test_(new TwoThreeTree<const int, TwoThreeTree<const time_t, TwoThreeTree<bool, TwoThreeTree<const std::string &, Test *> *> *> *>()),
@@ -62,17 +62,29 @@ namespace AUS2
 		delete this->station_test_;
 
 	}
-	void DataStorage::add_person(Person *person)
+	bool DataStorage::add_person(Person *person)
 	{
-		this->person_->insert(person->id(), person);
-		this->person_test_->insert(person->id(), new TwoThreeTree<const tm *, Test *>());
+		try {
+			this->person_->insert(person->id(), person);
+		}
+		catch (...) {
+			delete person;
+			return false;
+		}
+		this->person_test_->insert(person->id(), new TwoThreeTree<const time_t, Test *>());
+		return true;
 	}
-	void DataStorage::add_test(Test *test)
+	bool DataStorage::add_test(Test *test)
 	{
 		const time_t date = std::mktime((tm *)test->date_of_test());
-
-		this->test_->insert(test->uuid(), test);
-		this->person_test_->get(test->person()->id())->insert(test->date_of_test(), test);
+		try {
+			this->test_->insert(test->uuid(), test);
+		}
+		catch (...) {
+			delete test;
+			return false;
+		}
+		this->person_test_->get(test->person()->id())->insert(date, test);
 
 		if (!this->date_test_->contains_key(date)) {
 			this->date_test_->insert(date, new TwoThreeTree<bool, TwoThreeTree<const std::string &, Test *> *>());
@@ -112,6 +124,7 @@ namespace AUS2
 			this->station_test_->get(test->station())->insert(date, new TwoThreeTree<const std::string &, Test *>());
 		}
 		this->station_test_->get(test->station())->get(date)->insert(test->uuid(), test);
+		return true;
 	}
 	void DataStorage::remove_person(const std::string &id)
 	{
@@ -127,21 +140,32 @@ namespace AUS2
 	{
 		if (this->test_->contains_key(uuid)) {
 			auto test = this->test_->get(uuid);
-			const long date = test->date_of_test()->tm_year * 10000 + test->date_of_test()->tm_mon * 100 + test->date_of_test()->tm_mday;
+			const time_t date = std::mktime((tm *)test->date_of_test());
 			this->date_test_->get(date)->get(test->result())->remove(uuid);
 			this->county_test_->get(test->county())->get(date)->get(test->result())->remove(uuid);
 			this->district_test_->get(test->district())->get(date)->get(test->result())->remove(uuid);
 			this->station_test_->get(test->station())->get(date)->remove(uuid);
-			this->person_test_->get(test->person()->id())->remove(test->date_of_test());
+			this->person_test_->get(test->person()->id())->remove(date);
 			delete this->test_->remove(uuid);
 		}
 	}
 	Person *DataStorage::person_by_id(const std::string &id)
 	{
-		return this->person_->get(id);
+		try {
+			return this->person_->get(id);
+		}
+		catch (...) {
+			return nullptr;
+		}
+		
 	}
 	Test *DataStorage::test_by_uuid(const std::string &uuid) {
-		return this->test_->get(uuid);
+		try {
+			return this->test_->get(uuid);
+		}
+		catch (...) {
+			return nullptr;
+		}
 	}
 	std::string DataStorage::next_id(const std::string &id) {
 		std::list<Person *> *l = this->person_->get(id + "/0000", id + "/9999");

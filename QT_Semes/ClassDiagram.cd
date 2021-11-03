@@ -1,0 +1,91 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="AUS2::TwoThreeTree&lt;KeyType, DataType&gt;" Collapsed="true">
+    <Position X="0.5" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AECAAAAAgABAAAAEAIAAQABAAgAAABAAAAAAAgABEAA=</HashCode>
+      <FileName>2-3Tree.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="AUS2::BinarySearchTree&lt;DataType&gt;" Collapsed="true">
+    <Position X="2.75" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AECAAAAQgABAQAAEAIAAQABAAAAAAQAAAAAAAgAAAAA=</HashCode>
+      <FileName>BinarySearchTree.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="AUS2::Controller">
+    <Position X="10.5" Y="1.5" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAgBCAAQAgABgABABAAiAAAAAAAAAQAAgBJAAAAAI=</HashCode>
+      <FileName>Controller.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="AUS2::Person">
+    <Position X="3.25" Y="5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AIAAAAAAAAAAgAAgAAAEAAAAAAAEAAAAIAAAAAAAIgA=</HashCode>
+      <FileName>DataItems.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="AUS2::Test">
+    <Position X="5" Y="5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAAAIAABEQAAAARAACAAAACAAQAAAAgIgACQKAAAA=</HashCode>
+      <FileName>DataItems.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="AUS2::DataStorage">
+    <Position X="13" Y="1.5" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>QABAhBCAAAEBACgABABAACQAAAAQAAAQQAAAJEAAAAI=</HashCode>
+      <FileName>DataStorage.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="AUS2::Tester" Collapsed="true">
+    <Position X="7" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAIAABECAAAAAAAAAQAQACAAAAACAAAAABAABsAAAA=</HashCode>
+      <FileName>StructureTester.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="AUS2::Table&lt;KeyType, DataType&gt;" Collapsed="true">
+    <Position X="1.75" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AECAAAAAAABAAAAEAIAAQAAAAAAAAAAAAAAAAgAAAAA=</HashCode>
+      <FileName>Table.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Iterator&lt;DataType&gt;" Collapsed="true">
+    <Position X="8.75" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAIAAAAAAQAAAAQAAAAAAAAAAAAAgAAAAAAA=</HashCode>
+      <FileName>Iterator.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ProxyIterator&lt;DataType&gt;" Collapsed="true">
+    <Position X="7" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAACAAABAAgAAAAQAAAAQAAAAAAAAAAAAAgAAAAAAA=</HashCode>
+      <FileName>Iterator.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="IIterable&lt;DataType&gt;" Collapsed="true">
+    <Position X="1.75" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AACAAAACAAAAAAAAAAAAAAAQAAAAAAAAAAAAAgAAAAA=</HashCode>
+      <FileName>Iterator.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="QT_Semes">
+    <Position X="8.75" Y="1.5" Width="1.5" />
+    <Compartments>
+      <Compartment Name="Methods" Collapsed="true" />
+    </Compartments>
+    <TypeIdentifier>
+      <HashCode>AAgAAACwAEHFEAQAoAXFABiwgERAEQAAQiAAAAZAAAw=</HashCode>
+      <FileName>QT_Semes.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

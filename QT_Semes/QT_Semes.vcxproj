@@ -105,6 +105,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="StructureTester.cpp" />
     <QtRcc Include="QT_Semes.qrc" />
     <QtUic Include="QT_Semes.ui" />
     <QtMoc Include="QT_Semes.h" />
@@ -121,12 +122,16 @@
     <ClInclude Include="DataItems.h" />
     <ClInclude Include="DataStorage.h" />
     <ClInclude Include="Iterator.h" />
+    <ClInclude Include="StructureTester.h" />
     <ClInclude Include="Table.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="names_m.txt" />
     <Text Include="names_f.txt" />
     <Text Include="surnames.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="ClassDiagram.cd" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Condition="Exists('$(QtMsBuild)\qt.targets')">

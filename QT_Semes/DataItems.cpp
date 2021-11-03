@@ -30,16 +30,6 @@ namespace AUS2
 		}
 		return this->id_.substr(4, 2) + "." + month + "." + year;
 	}
-	std::string Person::string_representation()
-	{
-		std::string output = "";
-		output += "{\n\trodne_cislo: " + this->id_;
-		output += "\n\tmeno: " + this->name_;
-		output += "\n\tpriezvisko: " + this->surname_;
-		output += "\n\tdatum_narodenia: " + this->date_of_birth();
-		output += "\n}";
-		return output;
-	}
 	Test::Test(const std::string uuid, Person *person, const int county, const int district, const int station,
 		const bool result, tm *date_of_test, const std::string comment) :
 		uuid_(uuid), person_(person), district_(district), county_(county), station_(station), result_(result),
@@ -48,7 +38,6 @@ namespace AUS2
 	}
 	Test::~Test()
 	{
-		RpcStringFreeA((RPC_CSTR *)&this->uuid_);
 		this->person_ = nullptr;
 	}
 	const std::string &Test::uuid()
@@ -87,22 +76,6 @@ namespace AUS2
 		char buff[100];
 		std::strftime(buff, 100, "%d.%m.%Y %H:%M:%S", this->date_of_test_);
 		return std::string(buff);
-	}
-	std::string Test::string_representation()
-	{
-		std::string output = "";
-		output += "{\n\tkod: " + this->uuid_;
-		output += "\n\trodne_cislo: " + this->person_->id();
-		output += "\n\tkraj: " + this->county_;
-		output += "\n\tokres: " + this->district_;
-		output += "\n\tstanica: " + this->station_;
-		output += "\n\tdatum_vykonania: " + this->date_of_test_->tm_mday;
-		output += "." + this->date_of_test_->tm_mon;
-		output += "." + this->date_of_test_->tm_year;
-		output += "\n\tvysledok: " + this->result_;
-		output += "\n\tkomentar: " + this->comment_;
-		output += "\n\t}";
-		return output;
 	}
 }
 

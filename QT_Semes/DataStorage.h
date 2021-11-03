@@ -10,7 +10,7 @@ namespace AUS2
 
 		TwoThreeTree<const std::string &, Person *> *person_;
 		TwoThreeTree<const std::string &, Test *> *test_;
-		TwoThreeTree<const std::string &, TwoThreeTree<const tm *, Test *> *> *person_test_;
+		TwoThreeTree<const std::string &, TwoThreeTree<const time_t, Test *> *> *person_test_;
 		TwoThreeTree<const time_t, TwoThreeTree<bool, TwoThreeTree<const std::string &, Test *> *> *> *date_test_;
 		TwoThreeTree<const int, TwoThreeTree<const time_t, TwoThreeTree<bool, TwoThreeTree<const std::string &, Test *> *> *> *> *county_test_;
 		TwoThreeTree<const int, TwoThreeTree<const time_t, TwoThreeTree<bool, TwoThreeTree<const std::string &, Test *> *> *> *> *district_test_;
@@ -18,8 +18,8 @@ namespace AUS2
 	public:
 		DataStorage();
 		~DataStorage();
-		void add_person(Person *person);
-		void add_test(Test *test);
+		bool add_person(Person *person);
+		bool add_test(Test *test);
 		void remove_person(const std::string &id);
 		void remove_test(const std::string &uuid);
 		Person *person_by_id(const std::string &id);

@@ -8,23 +8,39 @@ QT_Semes::QT_Semes(QWidget *parent)
     this->person_view();
 
     QObject::connect(this->ui_.pushButton, &QPushButton::clicked, this, &QT_Semes::onButtonClickedGeneratePeople);
+    QObject::connect(this->ui_.pushButton_10, &QPushButton::clicked, this, &QT_Semes::onButtonClickedTester);
+    QObject::connect(this->ui_.pushButton_14, &QPushButton::clicked, this, &QT_Semes::onButtonClickedAddPerson);
+    QObject::connect(this->ui_.pushButton_13, &QPushButton::clicked, this, &QT_Semes::onButtonClickedAddTest);
     QObject::connect(this->ui_.pushButton_2, &QPushButton::clicked, this, &QT_Semes::onFilterPerson);
     QObject::connect(this->ui_.pushButton_6, &QPushButton::clicked, this, &QT_Semes::onResetPerson);
     QObject::connect(this->ui_.pushButton_7, &QPushButton::clicked, this, &QT_Semes::onFilterTest);
     QObject::connect(this->ui_.pushButton_8, &QPushButton::clicked, this, &QT_Semes::onResetTest);
     QObject::connect(this->ui_.pushButton_4, &QPushButton::clicked, this, &QT_Semes::onFilterDistrict);
     QObject::connect(this->ui_.pushButton_9, &QPushButton::clicked, this, &QT_Semes::onResetDistrict);
+    QObject::connect(this->ui_.pushButton_11, &QPushButton::clicked, this, &QT_Semes::onFilterStation);
+    QObject::connect(this->ui_.pushButton_12, &QPushButton::clicked, this, &QT_Semes::onResetStation);
+    QObject::connect(this->ui_.actionTest_2, &QAction::triggered, this, &QT_Semes::onActionTest_2);
     QObject::connect(this->ui_.actionGenerator, &QAction::triggered, this, &QT_Semes::onActionPridatGen);
-    QObject::connect(this->ui_.actionManu_lne, &QAction::triggered, this, &QT_Semes::onActionPridatMan);
+    QObject::connect(this->ui_.actionOsoba_2, &QAction::triggered, this, &QT_Semes::onActionPridatOsMan);
+    QObject::connect(this->ui_.actionTest_3, &QAction::triggered, this, &QT_Semes::onActionPridatTsMan);
     QObject::connect(this->ui_.actionOsoba, &QAction::triggered, this, &QT_Semes::onClickedOsobaView);
     QObject::connect(this->ui_.actionTest, &QAction::triggered, this, &QT_Semes::onClickedTestView);
     QObject::connect(this->ui_.actionOkresy, &QAction::triggered, this, &QT_Semes::onClickedOkresView);
     QObject::connect(this->ui_.actionKraje, &QAction::triggered, this, &QT_Semes::onClickedKrajView);
     QObject::connect(this->ui_.actionSlovensko_3, &QAction::triggered, this, &QT_Semes::onClickedSlovenskoView);
+    QObject::connect(this->ui_.actionTestovacie_Stanice, &QAction::triggered, this, &QT_Semes::onClickedStanicaView);
     QObject::connect(this->ui_.listView, &QListView::clicked, this, &QT_Semes::onSelectedPerson);
     QObject::connect(this->ui_.listView_2, &QListView::doubleClicked, this, &QT_Semes::onDoubleClickedTest);
     QObject::connect(this->ui_.listView_3, &QListView::clicked, this, &QT_Semes::onSelectedTest);
 
+}
+
+void QT_Semes::onButtonClickedTester() {
+    this->tester(this->ui_.spinBox_7->value(), this->ui_.spinBox_3->value(), this->ui_.spinBox_4->value(), this->ui_.spinBox_5->value(), this->ui_.spinBox_6->value());
+}
+
+QT_Semes::~QT_Semes() {
+    delete this->controller_;
 }
 
 void QT_Semes::onButtonClickedGeneratePeople() {
@@ -37,7 +53,29 @@ void QT_Semes::onButtonClickedGeneratePeople() {
     }
     this->person_view();
     this->render_person_view(this->controller_->people());
-    //this->ui_.lineEdit_4->setText(QString::fromStdString(person->id()));
+}
+
+void QT_Semes::onButtonClickedAddPerson() {
+    AUS2::Person *person = this->controller_->add_person(this->ui_.lineEdit_8->text().toStdString(), this->ui_.lineEdit_9->text().toStdString(), this->ui_.lineEdit_18->text().toStdString());
+    if (person) {
+        this->ui_.lineEdit_19->setText(QString::fromStdWString(L"Osoba bola úspešne pridaná"));
+    }
+    else {
+        this->ui_.lineEdit_19->setText(QString::fromStdWString(L"Osobu nebolo možné úspešne prida"));
+    }
+}
+
+void QT_Semes::onButtonClickedAddTest() {
+    AUS2::Test *test = this->controller_->add_test(this->ui_.lineEdit_6->text().toStdString(), this->ui_.spinBox_11->value(), this->ui_.spinBox_12->value(),
+        this->ui_.spinBox_13->value(), this->ui_.radioButton_2->isChecked(),
+        this->ui_.dateTimeEdit_5->dateTime().toString(QString("d.M.yyyy H:m:s")).toStdString(), 
+        this->ui_.lineEdit_21->text().toStdString());
+    if (test) {
+        this->ui_.lineEdit_7->setText(QString::fromStdWString(L"Test bol úspešne pridaný"));
+    }
+    else {
+        this->ui_.lineEdit_7->setText(QString::fromStdWString(L"Test nebolo možné prida"));
+    }
 }
 
 void QT_Semes::onActionZobrazit() {
@@ -45,12 +83,20 @@ void QT_Semes::onActionZobrazit() {
     //this->setCentralWidget(this->ui_.widget_2);
 }
 
-void QT_Semes::onActionPridatMan() {
-    this->ui_.stackedWidget->setCurrentIndex(1);
+void QT_Semes::onActionPridatOsMan() {
+    this->add_person_view();
+}
+
+void QT_Semes::onActionPridatTsMan() {
+    this->add_test_view();
 }
 
 void QT_Semes::onActionPridatGen() {
-    this->ui_.stackedWidget->setCurrentIndex(2);
+    this->generator_view();
+}
+
+void QT_Semes::onActionTest_2() {
+    this->tester_view();
 }
 
 void QT_Semes::onSelectedPerson() {
@@ -85,6 +131,10 @@ void QT_Semes::onClickedKrajView() {
 void QT_Semes::onClickedSlovenskoView() {
 }
 
+void QT_Semes::onClickedStanicaView() {
+    this->station_view();
+}
+
 void QT_Semes::onFilterPerson() {
     this->render_person_view(new std::list<AUS2::Person *>({ this->controller_->person_by_id(this->ui_.lineEdit_5->text().toStdString()) }));
 }
@@ -103,16 +153,44 @@ void QT_Semes::onResetTest() {
 
 void QT_Semes::onFilterDistrict() {
     bool c = this->ui_.radioButton->isChecked();
-    int d = this->ui_.lineEdit_6->text().toInt();
+    int d = this->ui_.spinBox_8->value();
     std::string ds = this->ui_.dateTimeEdit->dateTime().toString(QString("d.M.yyyy H:m:s")).toStdString(),
         de = this->ui_.dateTimeEdit_2->dateTime().toString(QString("d.M.yyyy H:m:s")).toStdString();
-
-    std::list<AUS2::Test *> *l = this->controller_->test_list_by_district(c, d, ds, de);
-    this->render_test_view(l);
+    this->render_test_view(this->controller_->test_list_by_district(c, d, ds, de));
 }
 
 void QT_Semes::onResetDistrict() {
     this->render_test_view(this->controller_->tests());
+}
+
+void QT_Semes::onFilterStation() {
+    int d = this->ui_.spinBox_9->value();
+    std::string ds = this->ui_.dateTimeEdit_3->dateTime().toString(QString("d.M.yyyy H:m:s")).toStdString(),
+        de = this->ui_.dateTimeEdit_4->dateTime().toString(QString("d.M.yyyy H:m:s")).toStdString();
+    this->render_test_view(this->controller_->test_list_by_station(d, ds, de));
+}
+
+void QT_Semes::onResetStation() {
+    this->render_test_view(this->controller_->tests());
+}
+
+void QT_Semes::generator_view() {
+    this->ui_.stackedWidget->setCurrentIndex(2);
+    this->ui_.stackedWidget_6->setCurrentIndex(0);
+}
+
+void QT_Semes::add_person_view() {
+    this->ui_.stackedWidget->setCurrentIndex(2);
+    this->ui_.stackedWidget_6->setCurrentIndex(1);
+}
+
+void QT_Semes::add_test_view() {
+    this->ui_.stackedWidget->setCurrentIndex(2);
+    this->ui_.stackedWidget_6->setCurrentIndex(2);
+}
+
+void QT_Semes::tester_view() {
+    this->ui_.stackedWidget->setCurrentIndex(1);
 }
 
 void QT_Semes::test_view() {
@@ -137,6 +215,24 @@ void QT_Semes::district_view() {
     this->ui_.stackedWidget_3->setCurrentIndex(1);
     this->ui_.stackedWidget_4->setCurrentIndex(1);
     this->ui_.stackedWidget_5->setCurrentIndex(1);
+}
+
+void QT_Semes::station_view() {
+    this->ui_.stackedWidget->setCurrentIndex(0);
+    this->ui_.stackedWidget_2->setCurrentIndex(3);
+    this->ui_.stackedWidget_3->setCurrentIndex(1);
+    this->ui_.stackedWidget_4->setCurrentIndex(1);
+    this->ui_.stackedWidget_5->setCurrentIndex(2);
+}
+
+void QT_Semes::tester(int operations, int insert, int remove, int get, int interval) {
+    this->ui_.listWidget->clear();
+    AUS2::Tester *tester = new AUS2::Tester();
+    tester->set(operations, insert, remove, get, interval);
+    while (tester->has_next()) {
+        this->ui_.listWidget->addItem(new QListWidgetItem(QString::fromStdString(tester->next())));
+    }
+    delete tester;
 }
 
 void QT_Semes::render_person_view(std::list<AUS2::Person *> *l) {
