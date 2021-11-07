@@ -4,6 +4,8 @@
 #include <iostream>
 #include "Table.h"
 
+//Všetky štruktúry sú implementované pomocou prednášok
+
 namespace AUS2
 {
 	template <PrimaryKeyProtocol KeyType, class DataType>

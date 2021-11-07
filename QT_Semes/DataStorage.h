@@ -7,7 +7,6 @@ namespace AUS2
 	class DataStorage
 	{
 	private:
-
 		TwoThreeTree<const std::string &, Person *> *person_;
 		TwoThreeTree<const std::string &, Test *> *test_;
 		TwoThreeTree<const std::string &, TwoThreeTree<const time_t, Test *> *> *person_test_;
