@@ -1,5 +1,6 @@
 #pragma once
 #include <list>
+#include <map>
 #include <random>
 #include <stdexcept>
 #include <iostream>
@@ -11,6 +12,7 @@ namespace AUS2
 	class Tester
 	{
 	private:
+		std::map<int, int> *control_;
 		TwoThreeTree<int, int> *tree_;
 		std::list<int> *list_;
 		int operations_;
@@ -24,7 +26,7 @@ namespace AUS2
 		~Tester();
 		void set(int operations, int insert, int remove, int get, int interval);
 		bool has_next();
-		std::string next();
+		bool next(std::string &output);
 		void reset();
 	};
 }

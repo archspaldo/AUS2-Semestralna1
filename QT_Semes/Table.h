@@ -11,6 +11,7 @@ namespace AUS2
 	template <class DataType>
 	concept PrimaryKeyProtocol = requires(const DataType & data) {
 		{ data <=> data } -> std::convertible_to<std::strong_ordering>;
+		{ data == data } -> std::convertible_to<bool>;
 	};
 
 	template <PrimaryKeyProtocol KeyType, class DataType>
@@ -23,12 +24,13 @@ namespace AUS2
 		virtual void clear() = 0;
 
 		virtual void insert(const KeyType &key, const DataType &data) = 0;
+		virtual bool insert_or_replace(const KeyType &key, const DataType &data, DataType &old_data) = 0;
 		virtual DataType &remove(const KeyType &key) = 0;
 
 		virtual DataType &get(const KeyType &key) = 0;
 		virtual const DataType get(const KeyType &key) const = 0;
 
-		virtual std::list<DataType> *get(const KeyType &lower_bound, const KeyType &upper_bound) = 0;
+		virtual std::list<DataType> *get_interval(const KeyType &lower_bound, const KeyType &upper_bound) = 0;
 
 		virtual Iterator<DataType> *begin_iterator() const = 0;
 		virtual Iterator<DataType> *end_iterator() const = 0;

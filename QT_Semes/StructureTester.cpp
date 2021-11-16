@@ -3,7 +3,7 @@
 namespace AUS2
 {
 	Tester::Tester() : 
-		list_(new std::list<int>()), tree_(new TwoThreeTree<int, int>()), operations_(0), insert_(0), remove_(0), get_(0), interval_(0), operation_count_(0){
+		list_(new std::list<int>()), tree_(new TwoThreeTree<int, int>()), control_(new std::map<int, int>()), operations_(0), insert_(0), remove_(0), get_(0), interval_(0), operation_count_(0){
 	}
 
 	Tester::~Tester() {
@@ -24,36 +24,36 @@ namespace AUS2
 		return this->operation_count_ < this->operations_;
 	}
 
-	std::string Tester::next() {
-		std::string output;
-		int roll, rand;
+	bool Tester::next(std::string &output) {
+		int roll, rand, a, b;
+		bool return_value =  true;
 		rand = std::rand() % (this->insert_ + this->remove_ + this->get_ + this->interval_);
 		if (rand < this->insert_) {
 			try {
 				roll = std::rand();
 				this->tree_->insert(roll, roll);
+				(*this->control_)[roll] = roll;
 				this->list_->push_front(roll);
-				output = "Pridavanie: pridane " + std::to_string(roll) + '-' + std::to_string(roll);
 			}
 			catch (...) {
-				output = "Pridavanie: kluc uz bol pridany";
 			}
 		}
 		else if (rand < this->insert_ + this->remove_) {
 			if (this->list_->empty()) {
-				output = "Vymazanie: strom je prazdny";
 			}
 			else {
-				output = "Vymazanie: vymazane " + std::to_string(this->list_->front()) + '-' + std::to_string(this->tree_->remove(this->list_->front()));
+				a = this->tree_->remove(this->list_->front());
+				b = (*this->control_)[this->list_->front()];
+				this->control_->erase(this->list_->front());
 				this->list_->pop_front();
+				return_value = a == b;
 			}
 		}
 		else  if (rand < this->insert_ + this->remove_ + this->get_){
 			if (this->list_->empty()) {
-				output = "Pristup: strom je prazdny";
 			}
 			else {
-				output = "Pristup: pristup " + std::to_string(this->list_->front()) + '-' + std::to_string(this->tree_->get(this->list_->front()));
+				return_value = this->tree_->get(this->list_->front()) == (*this->control_)[this->list_->front()];
 			}
 		}
 		else {
@@ -61,17 +61,21 @@ namespace AUS2
 			if (min > max) {
 				std::swap(min, max);
 			}
-			output = "Interval: od " + std::to_string(min) + " do " + std::to_string(max) + ": ";
-			std::list<int> *l = this->tree_->get(min, max);
-			for (auto obj : *l) {
-				output += std::to_string(obj) + ", ";
+			std::list<int> *l = this->tree_->get_interval(min, max);
+			auto iter = this->control_->lower_bound(min);
+			for (int i : *l) {
+				if ((*iter).second != i) {
+					return_value = false;
+				}
 			}
 			delete l;
+			return_value = true;
 		}
 		this->operation_count_++;
-		return output;
+		return return_value;
 	}
 	void Tester::reset() {
+		this->control_->clear();
 		this->tree_->clear();
 		this->list_->clear();
 		this->operation_count_ = 0;

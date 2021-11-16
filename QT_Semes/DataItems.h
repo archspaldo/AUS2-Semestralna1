@@ -5,9 +5,49 @@
 #include <ctime>
 #include <sstream>
 #include <iomanip>
+#include <vector>
 
 namespace AUS2
 {
+	enum class location_t { station = 0, county = 1, district = 2, state = 3};
+	location_t &operator++(location_t &c);
+
+	class TestLocation
+	{
+	private:
+		const location_t location_;
+		int id_;
+	protected:
+		TestLocation(int id, location_t location);
+	public:
+		const int &id();
+		const location_t location_type();
+	};
+
+	class County : public TestLocation
+	{
+	public:
+		County(const int id);
+	};
+
+	class District : public TestLocation
+	{
+	public:
+		District(const int id);
+	};
+
+	class Station : public TestLocation
+	{
+	public:
+		Station(const int id);
+	};
+
+	class State : public TestLocation
+	{
+	public:
+		State();
+	};
+
 	class Person
 	{
 	private:
@@ -28,25 +68,23 @@ namespace AUS2
 	private:
 		std::string uuid_;
 		Person *person_;
-		int district_;
-		int county_;
-		int station_;
+		TestLocation **locations_;
 		bool result_;
-		tm *date_of_test_;
+		time_t date_of_test_;
 		std::string comment_;
 	public:
-		Test(const std::string uuid, Person *person, const int county, const int district,
-			const int station, const bool result,
-			tm *date_of_test, const std::string comment);
+		Test(const std::string uuid, Person *person, TestLocation *county, TestLocation *district,
+			TestLocation *station, const bool result,
+			const time_t date_of_test, const std::string comment);
 		~Test();
 		const std::string &uuid();
 		Person *person();
-		const int district();
-		const int county();
-		const int station();
-		const bool result();
-		const tm *date_of_test();
+		TestLocation *location(location_t loc);
+		const bool &result();
+		const time_t &date_of_test();
 		const std::string &comment();
 		const std::string date();
 	};
+
+
 }

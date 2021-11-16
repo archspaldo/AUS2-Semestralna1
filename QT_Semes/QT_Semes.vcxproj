@@ -105,8 +105,21 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="CompositeKey.cpp" />
+    <ClCompile Include="ItemGenerator.cpp" />
+    <ClCompile Include="QT_locations_view.cpp" />
+    <ClCompile Include="QT_location_information.cpp" />
+    <ClCompile Include="QT_person_information.cpp" />
+    <ClCompile Include="QT_person_view.cpp" />
+    <ClCompile Include="QT_test_information.cpp" />
+    <ClCompile Include="QT_test_view.cpp" />
     <ClCompile Include="StructureTester.cpp" />
     <QtRcc Include="QT_Semes.qrc" />
+    <QtUic Include="QT_locations_view.ui" />
+    <QtUic Include="QT_location_information.ui" />
+    <QtUic Include="QT_person_information.ui" />
+    <QtUic Include="QT_person_view.ui" />
+    <QtUic Include="QT_test_information.ui" />
     <QtUic Include="QT_Semes.ui" />
     <QtMoc Include="QT_Semes.h" />
     <ClCompile Include="Controller.cpp" />
@@ -114,14 +127,23 @@
     <ClCompile Include="DataStorage.cpp" />
     <ClCompile Include="QT_Semes.cpp" />
     <ClCompile Include="main.cpp" />
+    <QtUic Include="QT_test_view.ui" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="2-3Tree.h" />
     <ClInclude Include="BinarySearchTree.h" />
+    <ClInclude Include="CompositeKey.h" />
     <ClInclude Include="Controller.h" />
     <ClInclude Include="DataItems.h" />
     <ClInclude Include="DataStorage.h" />
+    <ClInclude Include="ItemGenerator.h" />
     <ClInclude Include="Iterator.h" />
+    <QtMoc Include="QT_test_view.h" />
+    <QtMoc Include="QT_test_information.h" />
+    <QtMoc Include="QT_person_information.h" />
+    <QtMoc Include="QT_person_view.h" />
+    <QtMoc Include="QT_locations_view.h" />
+    <ClInclude Include="QT_location_information.h" />
     <ClInclude Include="StructureTester.h" />
     <ClInclude Include="Table.h" />
   </ItemGroup>

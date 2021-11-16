@@ -29,12 +29,13 @@ namespace AUS2
 		virtual void clear() override;
 
 		virtual void insert(const KeyType &key, const DataType &data) override;
+		virtual bool insert_or_replace(const KeyType &key, const DataType &data, DataType &old_data) override;
 		virtual DataType &remove(const KeyType &key) override;
 
 		virtual DataType &get(const KeyType &key) override;
 		virtual const DataType get(const KeyType &key) const override; 
 
-		virtual std::list<DataType> *get(const KeyType &lower_bound, const KeyType &upper_bound) override;
+		virtual std::list<DataType> *get_interval(const KeyType &lower_bound, const KeyType &upper_bound) override;
 
 		virtual Iterator<DataType> *begin_iterator() const override;
 		virtual Iterator<DataType> *end_iterator() const override;
@@ -184,6 +185,37 @@ namespace AUS2
 	}
 
 	template<PrimaryKeyProtocol KeyType, class DataType>
+	inline bool TwoThreeTree<KeyType, DataType>::insert_or_replace(const KeyType &key, const DataType &data, DataType &old_data) {
+		if (!this->root_) {
+			this->root_ = new TwoThreeTableNode(key, data);
+		}
+		else {
+			TwoThreeTableNode *target_node;
+			if (this->try_find(key, target_node)) {
+				old_data = target_node->data_node(key)->data();
+				target_node->data_node(key)->data() = data;
+				return true;
+			}
+			target_node = target_node->add_node(new typename Table<KeyType, DataType>::DataNode(key, data));
+			if (target_node->data_node_count() == 1) {
+				if (target_node->parent_node()) {
+					bool was_split = true;
+					TwoThreeTableNode *parent_node = target_node->parent_node();
+					while (parent_node && was_split) {
+						target_node = parent_node->add_and_split(target_node, was_split);
+						parent_node = target_node->parent_node();
+					}
+				}
+				if (!target_node->parent_node()) {
+					this->root_ = target_node;
+				}
+			}
+		}
+		this->size_++;
+		return false;
+	}
+
+	template<PrimaryKeyProtocol KeyType, class DataType>
 	inline DataType &TwoThreeTree<KeyType, DataType>::remove(const KeyType &key) noexcept(false) {
 		TwoThreeTableNode *target_node;
 		if (!this->try_find(key, target_node)) {
@@ -242,7 +274,7 @@ namespace AUS2
 	}
 
 	template<PrimaryKeyProtocol KeyType, class DataType>
-	inline std::list<DataType> *TwoThreeTree<KeyType, DataType>::get(const KeyType &lower_bound, const KeyType &upper_bound) {
+	inline std::list<DataType> *TwoThreeTree<KeyType, DataType>::get_interval(const KeyType &lower_bound, const KeyType &upper_bound) {
 		std::list<short> *list = new std::list<short>();
 		std::list<DataType> *return_list = new std::list<DataType>();
 		TwoThreeTableNode *current_node = this->root_;

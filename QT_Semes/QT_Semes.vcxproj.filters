@@ -21,6 +21,21 @@
       <UniqueIdentifier>{639EADAA-A684-42e4-A9AD-28FC9BCB8F7C}</UniqueIdentifier>
       <Extensions>ts</Extensions>
     </Filter>
+    <Filter Include="Header Files\UI">
+      <UniqueIdentifier>{6b770a07-18c6-41a3-aa5d-69c29a40c443}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\DataStructures">
+      <UniqueIdentifier>{71645ab4-305d-4e8c-a003-66b89421ad5f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Logic">
+      <UniqueIdentifier>{60c92c51-8231-482c-8a00-4627b8c4ef8f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\UI">
+      <UniqueIdentifier>{ca8b6d9c-c992-438f-9992-b12ae081f222}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Logic">
+      <UniqueIdentifier>{46a15fa9-4988-43dd-944c-30ff68f6afc8}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <QtRcc Include="QT_Semes.qrc">
@@ -29,54 +44,84 @@
     <QtUic Include="QT_Semes.ui">
       <Filter>Form Files</Filter>
     </QtUic>
-    <QtMoc Include="QT_Semes.h">
-      <Filter>Header Files</Filter>
-    </QtMoc>
-    <ClCompile Include="QT_Semes.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="QT_person_information.cpp">
+      <Filter>Source Files\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="QT_person_view.cpp">
+      <Filter>Source Files\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="QT_Semes.cpp">
+      <Filter>Source Files\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="QT_test_information.cpp">
+      <Filter>Source Files\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="QT_test_view.cpp">
+      <Filter>Source Files\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="CompositeKey.cpp">
+      <Filter>Source Files\Logic</Filter>
+    </ClCompile>
     <ClCompile Include="Controller.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\Logic</Filter>
     </ClCompile>
     <ClCompile Include="DataItems.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\Logic</Filter>
     </ClCompile>
     <ClCompile Include="DataStorage.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\Logic</Filter>
+    </ClCompile>
+    <ClCompile Include="ItemGenerator.cpp">
+      <Filter>Source Files\Logic</Filter>
     </ClCompile>
     <ClCompile Include="StructureTester.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\Logic</Filter>
+    </ClCompile>
+    <ClCompile Include="QT_locations_view.cpp">
+      <Filter>Source Files\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="QT_location_information.cpp">
+      <Filter>Source Files\UI</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="2-3Tree.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="BinarySearchTree.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Controller.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="DataItems.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="DataStorage.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Iterator.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\DataStructures</Filter>
     </ClInclude>
     <ClInclude Include="Table.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\DataStructures</Filter>
+    </ClInclude>
+    <ClInclude Include="Iterator.h">
+      <Filter>Header Files\DataStructures</Filter>
+    </ClInclude>
+    <ClInclude Include="BinarySearchTree.h">
+      <Filter>Header Files\DataStructures</Filter>
+    </ClInclude>
+    <ClInclude Include="CompositeKey.h">
+      <Filter>Header Files\Logic</Filter>
+    </ClInclude>
+    <ClInclude Include="Controller.h">
+      <Filter>Header Files\Logic</Filter>
+    </ClInclude>
+    <ClInclude Include="DataItems.h">
+      <Filter>Header Files\Logic</Filter>
+    </ClInclude>
+    <ClInclude Include="DataStorage.h">
+      <Filter>Header Files\Logic</Filter>
+    </ClInclude>
+    <ClInclude Include="ItemGenerator.h">
+      <Filter>Header Files\Logic</Filter>
     </ClInclude>
     <ClInclude Include="StructureTester.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\Logic</Filter>
+    </ClInclude>
+    <ClInclude Include="QT_location_information.h">
+      <Filter>Header Files\UI</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -92,5 +137,45 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="ClassDiagram.cd" />
+  </ItemGroup>
+  <ItemGroup>
+    <QtUic Include="QT_test_view.ui">
+      <Filter>Form Files</Filter>
+    </QtUic>
+    <QtUic Include="QT_test_information.ui">
+      <Filter>Form Files</Filter>
+    </QtUic>
+    <QtUic Include="QT_person_information.ui">
+      <Filter>Form Files</Filter>
+    </QtUic>
+    <QtUic Include="QT_person_view.ui">
+      <Filter>Form Files</Filter>
+    </QtUic>
+    <QtUic Include="QT_locations_view.ui">
+      <Filter>Form Files</Filter>
+    </QtUic>
+    <QtUic Include="QT_location_information.ui">
+      <Filter>Form Files</Filter>
+    </QtUic>
+  </ItemGroup>
+  <ItemGroup>
+    <QtMoc Include="QT_person_information.h">
+      <Filter>Header Files\UI</Filter>
+    </QtMoc>
+    <QtMoc Include="QT_person_view.h">
+      <Filter>Header Files\UI</Filter>
+    </QtMoc>
+    <QtMoc Include="QT_Semes.h">
+      <Filter>Header Files\UI</Filter>
+    </QtMoc>
+    <QtMoc Include="QT_test_information.h">
+      <Filter>Header Files\UI</Filter>
+    </QtMoc>
+    <QtMoc Include="QT_test_view.h">
+      <Filter>Header Files\UI</Filter>
+    </QtMoc>
+    <QtMoc Include="QT_locations_view.h">
+      <Filter>Header Files\UI</Filter>
+    </QtMoc>
   </ItemGroup>
 </Project>

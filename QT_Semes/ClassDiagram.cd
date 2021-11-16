@@ -21,24 +21,10 @@
       <FileName>Controller.h</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="AUS2::Person">
-    <Position X="3.25" Y="5" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AIAAAAAAAAAAgAAgAAAEAAAAAAAEAAAAIAAAAAAAIgA=</HashCode>
-      <FileName>DataItems.h</FileName>
-    </TypeIdentifier>
-  </Class>
-  <Class Name="AUS2::Test">
-    <Position X="5" Y="5" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AAQAAAIAABEQAAAARAACAAAACAAQAAAAgIgACQKAAAA=</HashCode>
-      <FileName>DataItems.h</FileName>
-    </TypeIdentifier>
-  </Class>
   <Class Name="AUS2::DataStorage">
     <Position X="13" Y="1.5" Width="1.75" />
     <TypeIdentifier>
-      <HashCode>QABAhBCAAAEBACgABABAACQAAAAQAAAQQAAAJEAAAAI=</HashCode>
+      <HashCode>QABAhBCAAAEBACgABABAACQAAAAQAACQQAAAJEAAAAI=</HashCode>
       <FileName>DataStorage.h</FileName>
     </TypeIdentifier>
   </Class>
