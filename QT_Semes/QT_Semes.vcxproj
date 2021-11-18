@@ -107,18 +107,24 @@
   <ItemGroup>
     <ClCompile Include="CompositeKey.cpp" />
     <ClCompile Include="ItemGenerator.cpp" />
+    <ClCompile Include="QT_add_person.cpp" />
+    <ClCompile Include="QT_add_test.cpp" />
+    <ClCompile Include="QT_generator.cpp" />
     <ClCompile Include="QT_locations_view.cpp" />
-    <ClCompile Include="QT_location_information.cpp" />
     <ClCompile Include="QT_person_information.cpp" />
     <ClCompile Include="QT_person_view.cpp" />
+    <ClCompile Include="QT_tester.cpp" />
     <ClCompile Include="QT_test_information.cpp" />
     <ClCompile Include="QT_test_view.cpp" />
     <ClCompile Include="StructureTester.cpp" />
     <QtRcc Include="QT_Semes.qrc" />
+    <QtUic Include="QT_add_person.ui" />
+    <QtUic Include="QT_add_test.ui" />
+    <QtUic Include="QT_generator.ui" />
     <QtUic Include="QT_locations_view.ui" />
-    <QtUic Include="QT_location_information.ui" />
     <QtUic Include="QT_person_information.ui" />
     <QtUic Include="QT_person_view.ui" />
+    <QtUic Include="QT_tester.ui" />
     <QtUic Include="QT_test_information.ui" />
     <QtUic Include="QT_Semes.ui" />
     <QtMoc Include="QT_Semes.h" />
@@ -143,7 +149,10 @@
     <QtMoc Include="QT_person_information.h" />
     <QtMoc Include="QT_person_view.h" />
     <QtMoc Include="QT_locations_view.h" />
-    <ClInclude Include="QT_location_information.h" />
+    <ClInclude Include="QT_add_person.h" />
+    <ClInclude Include="QT_add_test.h" />
+    <ClInclude Include="QT_generator.h" />
+    <ClInclude Include="QT_tester.h" />
     <ClInclude Include="StructureTester.h" />
     <ClInclude Include="Table.h" />
   </ItemGroup>

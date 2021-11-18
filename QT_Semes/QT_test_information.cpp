@@ -39,5 +39,6 @@ void QTestInformation::on_remove_test_button_clicked() {
     if (this->rendered_test_) {
 	    this->controller_->remove_test(this->rendered_test_->uuid());
 	    this->reset();
+        Q_EMIT this->test_removed();
     }
 }

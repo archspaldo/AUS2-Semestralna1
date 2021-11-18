@@ -36,6 +36,6 @@ namespace AUS2
 		std::list<Test *> *test_list_by_id(const std::string &id);
 		std::list<Test *> *test_list_by_location(location_t location, bool positive_only, const int id, const std::string date_start, const std::string date_end);
 		std::list<Person *> *person_list_by_location(location_t location, const int id, const std::string date_start, const std::string date_end);
-		std::list<std::pair<TestLocation *, int> *> *location_by_person(location_t location, const std::string date_start, const std::string date_end);
+		std::list<std::pair<TestLocation *, int> *> *location_list_by_positive_person_count(location_t location, const std::string date_start, const std::string date_end);
 	};
 }

@@ -21,5 +21,6 @@ private:
 	AUS2::Person *rendered_person_;
 Q_SIGNALS:
 	void test_doubleclicked(QAbstractItemModel * = nullptr);
+	void person_removed();
 };
 

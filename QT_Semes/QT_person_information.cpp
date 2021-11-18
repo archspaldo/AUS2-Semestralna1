@@ -19,7 +19,6 @@ void QPersonInformation::reset() {
 
     if (this->ui_.listView->model()) {
         delete this->ui_.listView->model();
-        this->ui_.listView->setModel(new QStandardItemModel(this));
     }
 }
 
@@ -32,9 +31,7 @@ void QPersonInformation::render_person(QString id) {
     this->ui_.lineEdit_4->setText(QString::fromStdString(this->rendered_person_->date_of_birth()));
 
     std::list<AUS2::Test *> *list = this->controller_->test_list_by_id(id.toStdString());
-    if (this->ui_.listView->model()) {
-        delete this->ui_.listView->model();
-    }
+    
     QStandardItemModel *model = new QStandardItemModel(this);
     model->setColumnCount(1);
     model->setHorizontalHeaderLabels(QStringList(QString("UUID testu")));
@@ -43,6 +40,9 @@ void QPersonInformation::render_person(QString id) {
         item = new QStandardItem(QString::fromStdString(obj->uuid()));
         item->setEditable(false);
         model->appendRow(item);
+    }
+    if (this->ui_.listView->model()) {
+        delete this->ui_.listView->model();
     }
     this->ui_.listView->setModel(model);
     delete list;
@@ -56,5 +56,6 @@ void QPersonInformation::on_remove_person_button_clicked() {
     if (this->rendered_person_) {
         this->controller_->remove_person(this->rendered_person_->id());
         this->reset();
+        Q_EMIT this->person_removed();
     }
 }

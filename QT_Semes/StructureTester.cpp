@@ -32,31 +32,40 @@ namespace AUS2
 			try {
 				roll = std::rand();
 				this->tree_->insert(roll, roll);
-				(*this->control_)[roll] = roll;
+				this->control_->insert({ roll, roll });
 				this->list_->push_front(roll);
+				output = "Pridany prvok " + std::to_string(roll) + ':' + std::to_string(roll);
 			}
 			catch (...) {
+				output = "Prvok uz bol pridany";
 			}
 		}
 		else if (rand < this->insert_ + this->remove_) {
 			if (this->list_->empty()) {
+				output = "Zoznam je prazdny";
 			}
 			else {
-				a = this->tree_->remove(this->list_->front());
-				b = (*this->control_)[this->list_->front()];
-				this->control_->erase(this->list_->front());
-				this->list_->pop_front();
+				auto pos = std::next(this->list_->begin(), std::rand() % this->list_->size());
+				a = this->tree_->remove(*pos);
+				b = (*this->control_)[*pos];
+				this->control_->erase(*pos);
+				this->list_->erase(pos);
 				return_value = a == b;
+				output = "Odobraty prvok " + std::to_string(a) + ':' + std::to_string(a);
 			}
 		}
 		else  if (rand < this->insert_ + this->remove_ + this->get_){
 			if (this->list_->empty()) {
+				output = "Zoznam je prazdny";
 			}
 			else {
-				return_value = this->tree_->get(this->list_->front()) == (*this->control_)[this->list_->front()];
+				auto pos = std::next(this->list_->begin(), std::rand() % this->list_->size());
+				return_value = this->tree_->get(*pos) == (*this->control_)[*pos];
+				output = "Spristupneny prvok " + std::to_string(a) + ':' + std::to_string(a);
 			}
 		}
 		else {
+			return_value = true;
 			int min = std::rand(), max = std::rand();
 			if (min > max) {
 				std::swap(min, max);
@@ -67,9 +76,10 @@ namespace AUS2
 				if ((*iter).second != i) {
 					return_value = false;
 				}
+				std::next(iter);
 			}
 			delete l;
-			return_value = true;
+			output = "Prvky v rozsahu " + std::to_string(min) + ':' + std::to_string(max);
 		}
 		this->operation_count_++;
 		return return_value;

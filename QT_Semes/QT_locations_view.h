@@ -6,25 +6,31 @@
 #include "QT_person_information.h"
 #include "QT_test_information.h"
 
-class QTLocationsView : public QWidget
+class QLocationView : public QWidget
 {
 	Q_OBJECT;
 public:
-	explicit QTLocationsView(QWidget *parent = nullptr, AUS2::Controller *controller = nullptr);
-	~QTLocationsView();
+	explicit QLocationView(QWidget *parent = nullptr, AUS2::Controller *controller = nullptr);
+	~QLocationView();
+	void set_active();
 private Q_SLOTS:
 	void on_filter_button_clicked();
 	void on_reset_button_clicked();
-	void on_select_location();
+	void on_location_selected();
+	void on_model_selected();
+	void on_person_removed();
+	void on_test_removed();
 private:
 	void render_people(std::list<AUS2::Person *> *person_list);
 	void render_tests(std::list<AUS2::Test *> *test_list);
 	void render_locations(std::list<std::pair<AUS2::TestLocation *, int> *> *location_list);
-	void set_active_model();
+	void update_model();
 	QPersonInformation *person_information_;
 	QTestInformation *test_information_;
-	QAbstractItemModel *person_model_, *test_model_;
+	QAbstractItemModel *person_model_, *test_model_, *location_model_;
 	Ui::Form_location_view ui_;
 	AUS2::Controller *controller_;
+Q_SIGNALS:
+	void test_doubleclicked(QAbstractItemModel * = nullptr);
 };
 

@@ -5,8 +5,8 @@ QPersonView::QPersonView(QWidget *parent, AUS2::Controller *controller)
     this->ui_.setupUi(this);
 
     this->person_information_ = new QPersonInformation(this, controller);
-
     this->person_information_->setObjectName(QString::fromUtf8("person_information"));
+    this->ui_.gridLayout->addWidget(this->person_information_, 0, 3, 2, 1);
 
 	connect(this->ui_.pushButton, &QPushButton::clicked, this, &QPersonView::on_filter_button_clicked);
 	connect(this->ui_.pushButton_3, &QPushButton::clicked, this, &QPersonView::on_reset_button_clicked);
@@ -24,6 +24,14 @@ void QPersonView::set_model(QAbstractItemModel *item_model) {
     this->ui_.listView_2->setModel(item_model);
 }
 
+void QPersonView::set_active() {
+    this->person_information_->reset();
+}
+
+void QPersonView::reset_model() {
+    this->render_people(this->controller_->person_list());
+}
+
 void QPersonView::on_filter_button_clicked() {
     if (!this->ui_.lineEdit->text().isEmpty()) {
         this->render_people(new std::list<AUS2::Person *>({ this->controller_->person(this->ui_.lineEdit->text().toStdString()) }));
@@ -31,11 +39,15 @@ void QPersonView::on_filter_button_clicked() {
 }
 
 void QPersonView::on_reset_button_clicked() {
-    this->render_people(this->controller_->person_list());
+    this->reset_model();
 }
 
 void QPersonView::on_test_clicked() {
     this->person_information_->render_person(this->ui_.listView_2->currentIndex().data(Qt::DisplayRole).toString());
+}
+
+void QPersonView::on_person_removed() {
+    this->on_filter_button_clicked();
 }
 
 void QPersonView::render_people(std::list<AUS2::Person *> *person_list) {

@@ -13,6 +13,8 @@ public:
 	void render_test(QString uuid);
 private Q_SLOTS:
 	void on_remove_test_button_clicked();
+Q_SIGNALS:
+	void test_removed();
 private:
 	Ui::Form_test_information ui_;
 	AUS2::Controller *controller_;

@@ -55,32 +55,18 @@
     <property name="title">
      <string>Pridať</string>
     </property>
-    <widget class="QMenu" name="menuManu_lne">
-     <property name="title">
-      <string>Manuálne</string>
-     </property>
-     <addaction name="actionOsoba_2"/>
-     <addaction name="actionTest_3"/>
-    </widget>
+    <addaction name="actionOsoba_2"/>
+    <addaction name="actionTest_3"/>
+    <addaction name="separator"/>
     <addaction name="actionGenerator"/>
-    <addaction name="menuManu_lne"/>
    </widget>
    <widget class="QMenu" name="menuZobrazi">
     <property name="title">
      <string>Zobraziť</string>
     </property>
-    <widget class="QMenu" name="menuRegion_lne_celky">
-     <property name="title">
-      <string>Regionálne celky</string>
-     </property>
-     <addaction name="actionSlovensko_3"/>
-     <addaction name="actionKraje"/>
-     <addaction name="actionOkresy"/>
-    </widget>
     <addaction name="actionOsoba"/>
     <addaction name="actionTest"/>
-    <addaction name="menuRegion_lne_celky"/>
-    <addaction name="actionTestovacie_Stanice"/>
+    <addaction name="actionLokality"/>
    </widget>
    <widget class="QMenu" name="menuTester">
     <property name="title">
@@ -132,9 +118,9 @@
     <string>Test</string>
    </property>
   </action>
-  <action name="actionTestovacie_Stanice">
+  <action name="actionLokality">
    <property name="text">
-    <string>Testovacie Stanice</string>
+    <string>Lokality</string>
    </property>
   </action>
   <action name="actionSlovensko_2">

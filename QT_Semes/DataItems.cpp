@@ -32,7 +32,7 @@ namespace AUS2
 	}
 	Test::Test(const std::string uuid, Person *person, TestLocation *county, TestLocation *district, TestLocation *station,
 		const bool result, const time_t date_of_test, const std::string comment) :
-		uuid_(uuid), person_(person), locations_(new TestLocation *[3]{0}), result_(result),
+		uuid_(uuid), person_(person), locations_(new TestLocation *[3]), result_(result),
 		date_of_test_(date_of_test), comment_(comment)
 	{
 		locations_[static_cast<int>(station->location_type())] = station;
@@ -42,7 +42,7 @@ namespace AUS2
 	Test::~Test()
 	{
 		this->person_ = nullptr;
-		delete this->locations_;
+		delete[] this->locations_;
 	}
 	const std::string &Test::uuid()
 	{

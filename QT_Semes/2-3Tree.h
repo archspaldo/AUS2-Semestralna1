@@ -547,6 +547,8 @@ namespace AUS2
 			delete node;
 		}
 		this->data_nodes_->clear();
+		delete this->children_;
+		delete this->data_nodes_;
 	}
 
 	template<PrimaryKeyProtocol KeyType, class DataType>

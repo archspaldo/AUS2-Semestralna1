@@ -1,6 +1,6 @@
 #include "QT_locations_view.h"
 
-QTLocationsView::QTLocationsView(QWidget *parent, AUS2::Controller *controller) :
+QLocationView::QLocationView(QWidget *parent, AUS2::Controller *controller) :
 	QWidget(parent), controller_(controller) {
     this->ui_.setupUi(this);
 
@@ -15,12 +15,26 @@ QTLocationsView::QTLocationsView(QWidget *parent, AUS2::Controller *controller) 
 
     this->person_model_ = new QStandardItemModel();
     this->test_model_ = new QStandardItemModel();
+    this->location_model_ = new QStandardItemModel();
+
+    QObject::connect(this->ui_.pushButton, &QPushButton::clicked, this, &QLocationView::on_filter_button_clicked);
+    QObject::connect(this->ui_.pushButton_3, &QPushButton::clicked, this, &QLocationView::on_reset_button_clicked);
+    QObject::connect(this->ui_.comboBox, &QComboBox::currentIndexChanged, this, &QLocationView::on_location_selected);
+    QObject::connect(this->ui_.comboBox_2, &QComboBox::currentIndexChanged, this, &QLocationView::on_model_selected);
+    connect(this->person_information_, QOverload<QAbstractItemModel *>::of(&QPersonInformation::test_doubleclicked), this, &QLocationView::test_doubleclicked);
 }
 
-QTLocationsView::~QTLocationsView() {
+QLocationView::~QLocationView() {
+    delete this->person_model_;
+    delete this->test_model_;
+    delete this->location_model_;
 }
 
-void QTLocationsView::on_filter_button_clicked() {
+void QLocationView::set_active() {
+    this->update_model();
+}
+
+void QLocationView::on_filter_button_clicked() {
     std::string date_from, date_to;
     int id;
     bool positive_only;
@@ -32,16 +46,25 @@ void QTLocationsView::on_filter_button_clicked() {
     positive_only = this->ui_.checkBox->isChecked();
     location = static_cast<AUS2::location_t>(this->ui_.comboBox->currentIndex());
 
-    render_people(this->controller_->person_list_by_location(location, id, date_from, date_to));
-    render_tests(this->controller_->test_list_by_location(location, id, positive_only, date_from, date_to));
+    switch (this->ui_.comboBox_2->currentIndex()) {
+    case 0 : 
+        this->render_people(this->controller_->person_list_by_location(location, id, date_from, date_to));
+        break;
+    case 1 :
+        this->render_tests(this->controller_->test_list_by_location(location, id, positive_only, date_from, date_to));
+        break;
+    case 2:
+        this->render_locations(this->controller_->location_list_by_positive_person_count(location, date_from, date_to));
+        break;
+    }
 }
 
-void QTLocationsView::on_reset_button_clicked() {
+void QLocationView::on_reset_button_clicked() {
     this->render_people(this->controller_->person_list());
     this->render_tests(this->controller_->test_list());
 }
 
-void QTLocationsView::on_select_location() {
+void QLocationView::on_location_selected() {
     if (this->ui_.comboBox->currentIndex() == 3) {
         this->ui_.spinBox->setValue(0);
         this->ui_.spinBox->setDisabled(true);
@@ -51,8 +74,19 @@ void QTLocationsView::on_select_location() {
     }
 }
 
-void QTLocationsView::render_people(std::list<AUS2::Person *> *person_list) {
-    delete this->person_model_;
+void QLocationView::on_model_selected() {
+    this->update_model();
+}
+
+void QLocationView::on_person_removed() {
+    this->on_filter_button_clicked();
+}
+
+void QLocationView::on_test_removed() {
+    this->on_filter_button_clicked();
+}
+
+void QLocationView::render_people(std::list<AUS2::Person *> *person_list) {
     QStandardItemModel * model = new QStandardItemModel();
 
     model->setColumnCount(1);
@@ -63,11 +97,12 @@ void QTLocationsView::render_people(std::list<AUS2::Person *> *person_list) {
         item->setEditable(false);
         model->appendRow(item);
     }
+    delete this->person_model_;
     this->person_model_ = model;
+    this->update_model();
 }
 
-void QTLocationsView::render_tests(std::list<AUS2::Test *> *test_list) {
-    delete this->test_model_;
+void QLocationView::render_tests(std::list<AUS2::Test *> *test_list) {
     QStandardItemModel *model = new QStandardItemModel();
 
     model->setColumnCount(1);
@@ -78,15 +113,48 @@ void QTLocationsView::render_tests(std::list<AUS2::Test *> *test_list) {
         item->setEditable(false);
         model->appendRow(item);
     }
+    delete this->test_model_;
     this->test_model_ = model;
+    this->update_model();
 }
 
-void QTLocationsView::set_active_model() {
-    if (this->ui_.comboBox_2->currentIndex() == 0) {
+void QLocationView::render_locations(std::list<std::pair<AUS2::TestLocation *, int> *> *location_list) {
+    QStandardItemModel *model = new QStandardItemModel(2, location_list->size());
+
+    model->setHorizontalHeaderLabels(QStringList({ QString::fromWCharArray(L"ID") , QString::fromWCharArray(L"Poèet nakazených") }));
+    QStandardItem *item;
+    int i = 0;
+    for (auto obj : *location_list) {
+        item = new QStandardItem(QString::number(obj->first->id()));
+        item->setEditable(false);
+        model->setItem(i, 0, item);
+
+        item = new QStandardItem(QString::number(obj->second));
+        item->setEditable(false);
+        model->setItem(i, 1, item);
+    }
+    delete this->location_model_;
+    this->location_model_ = model;
+    this->update_model();
+}
+
+void QLocationView::update_model() {
+    switch (this->ui_.comboBox_2->currentIndex()) {
+    case 0:
         this->ui_.listView_2->setModel(this->person_model_);
-    }
-    else {
+        this->person_information_->reset();
+        this->ui_.stackedWidget->setVisible(true);
+        this->ui_.stackedWidget->setCurrentIndex(0);
+        break;
+    case 1:
         this->ui_.listView_2->setModel(this->test_model_);
+        this->test_information_->reset();
+        this->ui_.stackedWidget->setVisible(true);
+        this->ui_.stackedWidget->setCurrentIndex(1);
+        break;
+    case 2:
+        this->ui_.listView_2->setModel(this->location_model_);
+        this->ui_.stackedWidget->setVisible(false);
+        break;
     }
-    this->ui_.stackedWidget->setCurrentIndex(this->ui_.comboBox_2->currentIndex());
 }

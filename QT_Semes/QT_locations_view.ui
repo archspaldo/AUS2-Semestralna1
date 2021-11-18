@@ -14,74 +14,24 @@
    <string>Form</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
-   <item row="0" column="5" rowspan="8">
-    <widget class="QStackedWidget" name="stackedWidget">
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="currentIndex">
-      <number>-1</number>
-     </property>
-    </widget>
-   </item>
-   <item row="0" column="0">
+   <item row="1" column="0">
     <widget class="QLabel" name="label">
      <property name="text">
       <string>Lokalita</string>
      </property>
     </widget>
    </item>
-   <item row="2" column="0">
-    <widget class="QLabel" name="label_2">
-     <property name="text">
-      <string>ID lokality</string>
-     </property>
-    </widget>
+   <item row="8" column="0" colspan="5">
+    <widget class="QListView" name="listView_2"/>
    </item>
-   <item row="6" column="2">
-    <widget class="QComboBox" name="comboBox_2">
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-     <item>
-      <property name="text">
-       <string>Osoby</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>Testy</string>
-      </property>
-     </item>
-    </widget>
-   </item>
-   <item row="5" column="1" colspan="2">
-    <widget class="QDateTimeEdit" name="dateTimeEdit_2"/>
-   </item>
-   <item row="4" column="1" colspan="2">
-    <widget class="QDateTimeEdit" name="dateTimeEdit"/>
-   </item>
-   <item row="2" column="1" colspan="2">
-    <widget class="QSpinBox" name="spinBox">
-     <property name="enabled">
-      <bool>false</bool>
-     </property>
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-    </widget>
-   </item>
-   <item row="0" column="1" colspan="2">
+   <item row="1" column="1" colspan="2">
     <widget class="QComboBox" name="comboBox">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
      <property name="currentIndex">
       <number>3</number>
      </property>
@@ -107,24 +57,100 @@
      </item>
     </widget>
    </item>
-   <item row="4" column="0">
-    <widget class="QLabel" name="label_3">
-     <property name="text">
-      <string>Dátum od</string>
+   <item row="5" column="1" colspan="2">
+    <widget class="QDateTimeEdit" name="dateTimeEdit">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
      </property>
     </widget>
    </item>
-   <item row="5" column="0">
+   <item row="5" column="3">
+    <widget class="QPushButton" name="pushButton">
+     <property name="text">
+      <string>Filtrovať</string>
+     </property>
+    </widget>
+   </item>
+   <item row="6" column="0">
     <widget class="QLabel" name="label_4">
      <property name="text">
       <string>Dátum do</string>
      </property>
     </widget>
    </item>
-   <item row="7" column="0" colspan="5">
-    <widget class="QListView" name="listView_2"/>
+   <item row="5" column="0">
+    <widget class="QLabel" name="label_3">
+     <property name="text">
+      <string>Dátum od</string>
+     </property>
+    </widget>
    </item>
-   <item row="6" column="0" colspan="2">
+   <item row="6" column="1" colspan="2">
+    <widget class="QDateTimeEdit" name="dateTimeEdit_2">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+    </widget>
+   </item>
+   <item row="5" column="4">
+    <widget class="QPushButton" name="pushButton_3">
+     <property name="text">
+      <string>Reset</string>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="0">
+    <widget class="QLabel" name="label_2">
+     <property name="text">
+      <string>ID lokality</string>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="1" colspan="2">
+    <widget class="QSpinBox" name="spinBox">
+     <property name="enabled">
+      <bool>false</bool>
+     </property>
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="0" colspan="5">
+    <widget class="QComboBox" name="comboBox_2">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <item>
+      <property name="text">
+       <string>Osoby</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Testy</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Sumarizácia</string>
+      </property>
+     </item>
+    </widget>
+   </item>
+   <item row="7" column="2">
     <widget class="QCheckBox" name="checkBox">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
@@ -137,17 +163,16 @@
      </property>
     </widget>
    </item>
-   <item row="4" column="3">
-    <widget class="QPushButton" name="pushButton">
-     <property name="text">
-      <string>Filtrovať</string>
+   <item row="0" column="5" rowspan="9">
+    <widget class="QStackedWidget" name="stackedWidget">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
      </property>
-    </widget>
-   </item>
-   <item row="4" column="4">
-    <widget class="QPushButton" name="pushButton_3">
-     <property name="text">
-      <string>Reset</string>
+     <property name="currentIndex">
+      <number>-1</number>
      </property>
     </widget>
    </item>

@@ -22,6 +22,14 @@ void QTestView::set_model(QAbstractItemModel *item_model) {
     this->ui_.listView_2->setModel(item_model);
 }
 
+void QTestView::set_active() {
+    this->test_information_->reset();
+}
+
+void QTestView::reset_model() {
+    this->render_tests(this->controller_->test_list());
+}
+
 void QTestView::on_filter_button_clicked() {
     if (!this->ui_.lineEdit->text().isEmpty()) {
         this->render_tests(new std::list<AUS2::Test *>({ this->controller_->test(this->ui_.lineEdit->text().toStdString()) }));
@@ -29,11 +37,15 @@ void QTestView::on_filter_button_clicked() {
 }
 
 void QTestView::on_reset_button_clicked() {
-    this->render_tests(this->controller_->test_list());
+    this->reset_model();
 }
 
 void QTestView::on_test_clicked() {
     this->test_information_->render_test(this->ui_.listView_2->currentIndex().data(Qt::DisplayRole).toString());
+}
+
+void QTestView::on_test_removed() {
+    this->on_filter_button_clicked();
 }
 
 void QTestView::render_tests(std::list<AUS2::Test *> *test_list) {

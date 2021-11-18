@@ -40,9 +40,9 @@ namespace AUS2
 				_county = new County(county);
 				this->storage_->add_location(_county);
 			}
-			if (!_county) {
-				_county = new District(district);
-				this->storage_->add_location(_county);
+			if (!_district) {
+				_district = new District(district);
+				this->storage_->add_location(_district);
 			}
 			std::string uuid = boost::lexical_cast<std::string>(boost::uuids::random_generator()());
 			struct tm *date = new tm;
@@ -52,6 +52,7 @@ namespace AUS2
 			if (!this->storage_->add_test(test)) {
 				return nullptr;
 			}
+			delete date;
 		}
 		return test;
 	}
@@ -111,7 +112,7 @@ namespace AUS2
 		delete checker;
 		return person_list;
 	}
-	std::list<std::pair<TestLocation *, int> *> *Controller::location_by_person(location_t location, const std::string date_start, const std::string date_end) {
+	std::list<std::pair<TestLocation *, int> *> *Controller::location_list_by_positive_person_count(location_t location, const std::string date_start, const std::string date_end) {
 		std::list<Person *> *l;
 		std::list<std::pair<TestLocation *, int> *> *return_list = new std::list<std::pair<TestLocation *, int> *>();
 		for (TestLocation *loc : *this->storage_->location_list(location)) {
