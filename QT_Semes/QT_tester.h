@@ -1,6 +1,7 @@
 #pragma once
 #include <QDialog>
 #include <QtWidgets/qlineedit.h>
+#include <QHeaderView>
 #include <QStandardItemModel>
 #include "StructureTester.h"
 #include "ui_QT_tester.h"

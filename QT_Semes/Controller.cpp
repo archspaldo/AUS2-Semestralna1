@@ -17,6 +17,14 @@ namespace AUS2
 		this->storage_->load_data();
 	}
 
+	void Controller::import_state() {
+		this->storage_->save_data();
+	}
+
+	void Controller::export_state() {
+		this->storage_->load_data();
+	}
+
 	Person *Controller::add_person(const std::string id, const std::string name, const std::string surname) {
 		Person *person = new Person(id, name, surname);
 		if (!this->storage_->add_person(person)) {

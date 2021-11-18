@@ -14,13 +14,17 @@ QTester::QTester(QWidget *parent) :
 
 QTester::~QTester() {
 	delete this->tester_;
-	delete this->ui_.listView->model();
+	delete this->ui_.tableView->model();
+	this->lineEdit_2_;
 }
 
 void QTester::on_start_test() {
 	QStandardItemModel *model = new QStandardItemModel();
 	model->setColumnCount(2);
 	model->setHorizontalHeaderLabels(QStringList({ QString::fromWCharArray(L"Vykonaná operácia"), QString::fromWCharArray(L"Výsledok") }));
+	this->ui_.tableView->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
+	this->ui_.tableView->horizontalHeader()->setStretchLastSection(true);
+
 	this->tester_->reset();
 	this->tester_->set(this->ui_.spinBox->value(), this->ui_.spinBox_2->value(), this->ui_.spinBox_4->value(), this->ui_.spinBox_3->value(), this->ui_.spinBox_4->value());
 	std::string str;
@@ -30,6 +34,6 @@ void QTester::on_start_test() {
 		res = this->tester_->next(str);	
 		model->appendRow({ new QStandardItem(QString::fromStdString(str)),  new QStandardItem(QString::number(res)) });
 	}
-	delete this->ui_.listView->model();
-	this->ui_.listView->setModel(model);
+	delete this->ui_.tableView->model();
+	this->ui_.tableView->setModel(model);
 }

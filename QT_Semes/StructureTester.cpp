@@ -7,8 +7,10 @@ namespace AUS2
 	}
 
 	Tester::~Tester() {
+		this->reset();
 		delete this->tree_;
 		delete this->list_;
+		delete this->control_;
 	}
 
 	void Tester::set(int operations, int insert, int remove, int get, int interval) {
@@ -61,11 +63,10 @@ namespace AUS2
 			else {
 				auto pos = std::next(this->list_->begin(), std::rand() % this->list_->size());
 				return_value = this->tree_->get(*pos) == (*this->control_)[*pos];
-				output = "Spristupneny prvok " + std::to_string(a) + ':' + std::to_string(a);
+				output = "Spristupneny prvok " + std::to_string(*pos) + ':' + std::to_string(*pos);
 			}
 		}
 		else {
-			return_value = true;
 			int min = std::rand(), max = std::rand();
 			if (min > max) {
 				std::swap(min, max);
@@ -76,7 +77,7 @@ namespace AUS2
 				if ((*iter).second != i) {
 					return_value = false;
 				}
-				std::next(iter);
+				iter = std::next(iter);
 			}
 			delete l;
 			output = "Prvky v rozsahu " + std::to_string(min) + ':' + std::to_string(max);
@@ -84,6 +85,7 @@ namespace AUS2
 		this->operation_count_++;
 		return return_value;
 	}
+
 	void Tester::reset() {
 		this->control_->clear();
 		this->tree_->clear();

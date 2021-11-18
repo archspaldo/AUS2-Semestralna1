@@ -2,6 +2,7 @@
 #include <QtWidgets/qwidget.h>
 #include <QStandardItemModel>
 #include <list>
+#include <QHeaderView>
 #include "ui_QT_locations_view.h"
 #include "QT_person_information.h"
 #include "QT_test_information.h"

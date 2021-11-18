@@ -72,6 +72,7 @@ namespace AUS2
 		char buff[100];
 		std::strftime(buff, 100, "%d.%m.%Y %H:%M:%S", ltm);
 		std::string result = std::string(buff);
+		delete ltm;
 		return result;
 	}
 	TestLocation::TestLocation(int id, location_t location) : id_(id), location_(location) {

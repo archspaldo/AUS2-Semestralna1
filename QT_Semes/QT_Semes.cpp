@@ -27,6 +27,8 @@ QT_Semes::QT_Semes(QWidget *parent)
     QObject::connect(this->ui_.actionTest_3, &QAction::triggered, this, &QT_Semes::on_add_test_triggered);
     QObject::connect(this->ui_.actionTest_2, &QAction::triggered, this, &QT_Semes::on_tester_triggered);
     QObject::connect(this->ui_.actionGenerator, &QAction::triggered, this, &QT_Semes::on_generate_triggered);
+    QObject::connect(this->ui_.actionImport, &QAction::triggered, this, &QT_Semes::on_import_triggered);
+    QObject::connect(this->ui_.actionExport, &QAction::triggered, this, &QT_Semes::on_export_triggered);
 }
 QT_Semes::~QT_Semes() {
     delete this->controller_;
@@ -77,6 +79,14 @@ void QT_Semes::on_tester_triggered() {
     dialog.exec();
     this->person_view();
     this->person_view_->reset_model();
+}
+
+void QT_Semes::on_import_triggered() {
+    this->controller_->import_state();
+}
+
+void QT_Semes::on_export_triggered() {
+    this->controller_->export_state();
 }
 
 void QT_Semes::person_view() {

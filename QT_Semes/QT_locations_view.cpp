@@ -17,6 +17,9 @@ QLocationView::QLocationView(QWidget *parent, AUS2::Controller *controller) :
     this->test_model_ = new QStandardItemModel();
     this->location_model_ = new QStandardItemModel();
 
+    this->ui_.tableView->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
+    this->ui_.tableView->horizontalHeader()->setStretchLastSection(true);
+
     QObject::connect(this->ui_.pushButton, &QPushButton::clicked, this, &QLocationView::on_filter_button_clicked);
     QObject::connect(this->ui_.pushButton_3, &QPushButton::clicked, this, &QLocationView::on_reset_button_clicked);
     QObject::connect(this->ui_.comboBox, &QComboBox::currentIndexChanged, this, &QLocationView::on_location_selected);
@@ -100,6 +103,7 @@ void QLocationView::render_people(std::list<AUS2::Person *> *person_list) {
     delete this->person_model_;
     this->person_model_ = model;
     this->update_model();
+    delete person_list;
 }
 
 void QLocationView::render_tests(std::list<AUS2::Test *> *test_list) {
@@ -116,44 +120,41 @@ void QLocationView::render_tests(std::list<AUS2::Test *> *test_list) {
     delete this->test_model_;
     this->test_model_ = model;
     this->update_model();
+    delete test_list;
 }
 
 void QLocationView::render_locations(std::list<std::pair<AUS2::TestLocation *, int> *> *location_list) {
-    QStandardItemModel *model = new QStandardItemModel(2, location_list->size());
-
+    QStandardItemModel *model = new QStandardItemModel();
+    model->setColumnCount(2);
     model->setHorizontalHeaderLabels(QStringList({ QString::fromWCharArray(L"ID") , QString::fromWCharArray(L"Poèet nakazených") }));
     QStandardItem *item;
     int i = 0;
     for (auto obj : *location_list) {
-        item = new QStandardItem(QString::number(obj->first->id()));
-        item->setEditable(false);
-        model->setItem(i, 0, item);
-
-        item = new QStandardItem(QString::number(obj->second));
-        item->setEditable(false);
-        model->setItem(i, 1, item);
+        model->appendRow({ new QStandardItem(QString::number(obj->first->id())),  new QStandardItem(QString::number(obj->second)) });
     }
+    
     delete this->location_model_;
     this->location_model_ = model;
     this->update_model();
+    delete location_list;
 }
 
 void QLocationView::update_model() {
     switch (this->ui_.comboBox_2->currentIndex()) {
     case 0:
-        this->ui_.listView_2->setModel(this->person_model_);
+        this->ui_.tableView->setModel(this->person_model_);
         this->person_information_->reset();
         this->ui_.stackedWidget->setVisible(true);
         this->ui_.stackedWidget->setCurrentIndex(0);
         break;
     case 1:
-        this->ui_.listView_2->setModel(this->test_model_);
+        this->ui_.tableView->setModel(this->test_model_);
         this->test_information_->reset();
         this->ui_.stackedWidget->setVisible(true);
         this->ui_.stackedWidget->setCurrentIndex(1);
         break;
     case 2:
-        this->ui_.listView_2->setModel(this->location_model_);
+        this->ui_.tableView->setModel(this->location_model_);
         this->ui_.stackedWidget->setVisible(false);
         break;
     }

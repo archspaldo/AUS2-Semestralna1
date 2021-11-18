@@ -28,6 +28,8 @@ private Q_SLOTS:
     void on_add_test_triggered();
     void on_generate_triggered();
     void on_tester_triggered();
+    void on_import_triggered();
+    void on_export_triggered();
 private:
     void person_view();
     void test_view(QAbstractItemModel *item_model = nullptr);

@@ -23,6 +23,8 @@ namespace AUS2
 		Controller();
 		~Controller();
 		void fill_database(const int station_count, const int county_count, const int district_count, const int person_count, const int test_count);
+		void import_state();
+		void export_state();
 		Person* add_person(const std::string id, const std::string name, const std::string surname);
 		Test* add_test(const std::string id, const int county, 
 			const int district, const int station, const bool result,
