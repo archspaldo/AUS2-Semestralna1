@@ -12,9 +12,10 @@ public:
 	~QPersonInformation();
 	void reset();
 	void render_person(QString id);
+	void render_person(QString id, bool positive_only, std::string date_from, std::string date_to);
 private Q_SLOTS:
 	void on_remove_person_button_clicked();
-	void on_person_doubleclicked();
+	void on_test_doubleclicked();
 private:
 	Ui::Form_person_information ui_;
 	AUS2::Controller *controller_;

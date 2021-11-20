@@ -50,6 +50,7 @@ void AUS2::ItemGenerator::generate_to_directory(const int station_count,
 	output_test.open(directory + "test.csv");
 	output_test << "UUID,ID,Station,County,District,Result,Date,Comment";
 
+
 	for (int j = 0; j < person_count; j++) {
 		female = rand() % 2;
 		name = female ? (*this->names_f_)[rand() % this->names_f_->size()] : (*this->names_m_)[rand() % this->names_m_->size()];
@@ -89,10 +90,20 @@ void AUS2::ItemGenerator::generate_to_directory(const int station_count,
 
 		for (int i = 0; i < test_count; i++) {
 			uuid = boost::lexical_cast<std::string>(boost::uuids::random_generator()());
+			time_t low, high;
+			struct tm date = {0};
+			std::istringstream ss{ "15.3.2021" };
+			ss >> std::get_time(&date, "%d.%m.%Y");
+			low = std::mktime(&date);
+			date = { 0 };
+			std::istringstream ss2{ "19.11.2021" };
+			ss2 >> std::get_time(&date, "%d.%m.%Y");
+			high = std::mktime(&date);
+			high = (std::rand() * 1000) % (high - low) + low;
 
-			str_date = "";
-			str_date += std::to_string((rand() % 28) + 1) + "." + std::to_string((rand() % 12) + 1) + ".2021 ";
-			str_date += std::to_string((rand() % 9) + 7) + ':' + std::to_string(rand() % 60) + ':' + std::to_string(rand() % 60);
+			char buff[100];
+			std::strftime(buff, 100, "%d.%m.%Y %H:%M:%S", std::localtime(&high));
+			str_date = std::string(buff) + ' ';
 
 			output_test << '\n' << uuid << ',' << id << ',' << rand() % station_count << ','
 				<< rand() % county_count << ',' << rand() % district_count << ','

@@ -5,18 +5,22 @@ namespace AUS2
 	DataStorage::DataStorage() :
 		person_(new TwoThreeTree<const std::string &, Person *>()),
 		test_(new TwoThreeTree<const std::string &, Test *>()),
-		locations_(new TwoThreeTree<const CKLocID, TestLocation *>()),
+		location_(new TwoThreeTree<const CKLocID, TestLocation *>()),
 		tests_by_person_(new TwoThreeTree<const std::string &, TwoThreeTree<const time_t, Test *> *>()),
-		tests_by_location_(new TwoThreeTree<const CKLocResult, TwoThreeTree<const time_t, std::list<Test *> *> *>()) {
+		tests_by_location_(new TwoThreeTree<const CKLocResult, TwoThreeTree<const time_t, std::list<Test *> *> *>()),
+		tests_by_county_(new TwoThreeTree<const int, TwoThreeTree<const std::string &, std::list<Test *> *> *>()),
+		max_("")
+	{
 	}
 
 	DataStorage::~DataStorage() {
 		this->clear();
 		delete this->person_;
 		delete this->test_;
-		delete this->locations_;
+		delete this->location_;
 		delete this->tests_by_person_;
 		delete this->tests_by_location_;
+		delete this->tests_by_county_;
 	}
 
 	void DataStorage::clear() {
@@ -29,19 +33,25 @@ namespace AUS2
 			}
 			delete node;
 		}
+		for (auto node : *this->tests_by_county_) {
+			for (auto t : *node) {
+				delete t;
+			}
+			delete node;
+		}
 		for (auto node : *this->person_) {
 			delete node;
 		}
 		for (auto node : *this->test_) {
 			delete node;
 		}
-		for (auto node : *this->locations_) {
+		for (auto node : *this->location_) {
 			delete node;
 		}
-
+		this->tests_by_county_->clear();
 		this->person_->clear();
 		this->test_->clear();
-		this->locations_->clear();
+		this->location_->clear();
 		this->tests_by_person_->clear();
 		this->tests_by_location_->clear();
 	}
@@ -59,9 +69,9 @@ namespace AUS2
 		output.open(directory + "test.csv");
 		output << "UUID,ID,Station,County,District,Result,Date,Comment";
 		for (Test *test : *this->test_) {
-			output << '\n' << test->uuid() << ',' << test->person()->id() << ',' << test->location(location_t::station) << ','
-				<< test->location(location_t::county) << ',' << test->location(location_t::district) << ','
-				<< test->result() << ',' << test->date_of_test() << ',' << test->comment();
+			output << '\n' << test->uuid() << ',' << test->person()->id() << ',' << test->location(location_t::station)->id() << ','
+				<< test->location(location_t::county)->id() << ',' << test->location(location_t::district)->id() << ','
+				<< test->result() << ',' << test->date() << ',' << test->comment();
 		}
 		output.close();
 
@@ -69,7 +79,7 @@ namespace AUS2
 		for (location_t loc = location_t::station; loc != location_t::state; ++loc) {
 			output.open(directory + str[static_cast<int>(loc)]);
 			output << "ID";
-			for (TestLocation *location : *this->locations_->get_interval(CKLocID(loc, INT_MIN), CKLocID(loc, INT_MAX))) {
+			for (TestLocation *location : *this->location_->get_interval(CKLocID(loc, INT_MIN), CKLocID(loc, INT_MAX))) {
 				output << '\n' << location->id();
 			}
 			output.close();
@@ -98,6 +108,9 @@ namespace AUS2
 			surname = buffer.front();
 			buffer.pop_front();
 			this->add_person(new Person(id, name, surname));
+			if (id > this->max_) {
+				this->max_ = id;
+			}
 		}
 		input.close();
 
@@ -175,6 +188,9 @@ namespace AUS2
 			return false;
 		}
 		this->tests_by_person_->insert(person->id(), new TwoThreeTree<const time_t, Test *>());
+		if (person->id() > this->max_) {
+			this->max_ = person->id();
+		}
 		return true;
 	}
 
@@ -207,12 +223,20 @@ namespace AUS2
 			t->insert(test->date_of_test(), new std::list<Test *>());
 		}
 		t->get(test->date_of_test())->push_back(test);
+		if (!this->tests_by_county_->contains_key(test->location(location_t::county)->id())) {
+			this->tests_by_county_->insert(test->location(location_t::county)->id(), new TwoThreeTree<const std::string &, std::list<Test *> *>());
+		}
+		auto z = this->tests_by_county_->get(test->location(location_t::county)->id());
+		if (!z->contains_key(test->person()->id())) {
+			z->insert(test->person()->id(), new std::list<Test *>());
+		}
+		z->get(test->person()->id())->push_back(test);
 		return true;
 	}
 
 	bool DataStorage::add_location(TestLocation *location) {
 		try {
-			this->locations_->insert(CKLocID(location->location_type(), location->id()), location);
+			this->location_->insert(CKLocID(location->location_type(), location->id()), location);
 		}
 		catch (...) {
 			delete location;
@@ -241,6 +265,7 @@ namespace AUS2
 			this->tests_by_location_->get(cklr)->get(test->date_of_test())->remove(test);
 			this->tests_by_person_->get(test->person()->id())->remove(test->date_of_test());
 			delete this->test_->remove(uuid);
+			this->tests_by_county_->get(test->location(location_t::county)->id())->get(test->person()->id())->remove(test);
 		}
 	}
 
@@ -263,7 +288,7 @@ namespace AUS2
 	}
 	TestLocation *DataStorage::location(const location_t location, const int id) {
 		try {
-			return this->locations_->get(CKLocID(location, id));
+			return this->location_->get(CKLocID(location, id));
 		}
 		catch (...) {
 			return nullptr;
@@ -285,7 +310,7 @@ namespace AUS2
 	}
 	std::list<TestLocation *> *DataStorage::location_list(const location_t location) {
 		std::list<TestLocation *> *l = new std::list<TestLocation *>();
-		for (auto obj : *this->locations_->get_interval(CKLocID(location, INT_MIN), CKLocID(location, INT_MAX))) {
+		for (auto obj : *this->location_->get_interval(CKLocID(location, INT_MIN), CKLocID(location, INT_MAX))) {
 			l->push_back(obj);
 		}
 		return l;
@@ -297,13 +322,32 @@ namespace AUS2
 		}
 		return test_list; 
 	}
+	std::list<Test *> *DataStorage::test_list_by_id(const std::string &id, bool positive_only, const time_t date_start, const time_t date_to) {
+		return this->tests_by_person_->get(id)->get_interval(date_start, date_to);
+	}
 	std::list<Test *> *DataStorage::test_list_by_location(const location_t location, const int id, bool positive_only, const time_t date_start, const time_t date_end) {
 		std::list<Test *> *test_list = new std::list<Test *>();
-		for (auto tree : *this->tests_by_location_->get_interval(CKLocResult(location, id, positive_only), CKLocResult(location, id, true))) {
-			for (auto test : *tree->get_interval(date_start, date_end)) {
+		auto t = this->tests_by_location_->get_interval(CKLocResult(location, id, positive_only), CKLocResult(location, id, true));
+		for (auto tree : *t) {
+			auto l = tree->get_interval(date_start, date_end);
+			for (auto test : *l) {
 				test_list->insert(test_list->end(), test->begin(), test->end());
 			}
+			delete l;
 		}
+		delete t;
 		return test_list;
+	}
+	std::list<Test *> *DataStorage::test_by_county(const int id) {
+		std::list<Test *> *l = new std::list<Test *>();
+		if (!this->tests_by_county_->contains_key(id)) {
+			return l;
+		};
+		auto z = this->tests_by_county_->get(id)->get_interval("", this->max_);
+		for (auto x : *z) {
+			l->insert(l->end(), x->begin(), x->end());
+		}
+		delete z;
+		return l;
 	}
 }

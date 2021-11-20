@@ -10,7 +10,7 @@ QPersonView::QPersonView(QWidget *parent, AUS2::Controller *controller)
 
 	connect(this->ui_.pushButton, &QPushButton::clicked, this, &QPersonView::on_filter_button_clicked);
 	connect(this->ui_.pushButton_3, &QPushButton::clicked, this, &QPersonView::on_reset_button_clicked);
-	connect(this->ui_.listView_2, &QListView::clicked, this, &QPersonView::on_test_clicked);
+	connect(this->ui_.listView_2, &QListView::clicked, this, &QPersonView::on_person_clicked);
     connect(this->person_information_, QOverload<QAbstractItemModel *>::of(&QPersonInformation::test_doubleclicked), this, &QPersonView::test_doubleclicked);
 }
 
@@ -42,12 +42,16 @@ void QPersonView::on_reset_button_clicked() {
     this->reset_model();
 }
 
-void QPersonView::on_test_clicked() {
+void QPersonView::on_person_clicked() {
     this->person_information_->render_person(this->ui_.listView_2->currentIndex().data(Qt::DisplayRole).toString());
 }
 
 void QPersonView::on_person_removed() {
     this->on_filter_button_clicked();
+}
+
+void QPersonView::on_test_double_clicked(QAbstractItemModel *model) {
+    Q_EMIT this->test_doubleclicked(model);
 }
 
 void QPersonView::render_people(std::list<AUS2::Person *> *person_list) {
@@ -61,9 +65,11 @@ void QPersonView::render_people(std::list<AUS2::Person *> *person_list) {
         model->setHorizontalHeaderLabels(QStringList(QString::fromWCharArray(L"Rodné èíslo osoby")));
         QStandardItem *item;
         for (auto obj : *person_list) {
-            item = new QStandardItem(QString::fromStdString(obj->id()));
-            item->setEditable(false);
-            model->appendRow(item);
+            if (obj) {
+                item = new QStandardItem(QString::fromStdString(obj->id()));
+                item->setEditable(false);
+                model->appendRow(item);
+            }
         }
         this->ui_.listView_2->setModel(model);
         delete person_list;

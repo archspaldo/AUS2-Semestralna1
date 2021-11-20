@@ -9,6 +9,7 @@
 
 int main(int argc, char *argv[]) {
 	initHeapMonitor();
+	srand(time(NULL));
 	QApplication a(argc, argv);
 	QT_Semes w;
 	w.show();

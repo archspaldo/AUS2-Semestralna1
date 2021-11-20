@@ -17,8 +17,9 @@ public:
 private Q_SLOTS:
 	void on_filter_button_clicked();
 	void on_reset_button_clicked();
-	void on_test_clicked();
+	void on_person_clicked();
 	void on_person_removed();
+	void on_test_double_clicked(QAbstractItemModel *model = nullptr);
 private:
 	void render_people(std::list<AUS2::Person *> *person_list);
 	QPersonInformation *person_information_;

@@ -37,6 +37,7 @@ namespace AUS2
 				this->control_->insert({ roll, roll });
 				this->list_->push_front(roll);
 				output = "Pridany prvok " + std::to_string(roll) + ':' + std::to_string(roll);
+				return_value = this->tree_->size() == this->control_->size();
 			}
 			catch (...) {
 				output = "Prvok uz bol pridany";

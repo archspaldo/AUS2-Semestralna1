@@ -32,24 +32,24 @@ namespace AUS2
 	}
 	Test::Test(const std::string uuid, Person *person, TestLocation *county, TestLocation *district, TestLocation *station,
 		const bool result, const time_t date_of_test, const std::string comment) :
-		uuid_(uuid), person_(person), locations_(new TestLocation *[3]), result_(result),
+		uuid_(uuid), person_(person), location_(new TestLocation *[3]), result_(result),
 		date_of_test_(date_of_test), comment_(comment)
 	{
-		locations_[static_cast<int>(station->location_type())] = station;
-		locations_[static_cast<int>(county->location_type())] = county;
-		locations_[static_cast<int>(district->location_type())] = district;
+		location_[static_cast<int>(station->location_type())] = station;
+		location_[static_cast<int>(county->location_type())] = county;
+		location_[static_cast<int>(district->location_type())] = district;
 	}
 	Test::~Test()
 	{
 		this->person_ = nullptr;
-		delete[] this->locations_;
+		delete[] this->location_;
 	}
 	const std::string &Test::uuid()
 	{
 		return this->uuid_;
 	}
 	TestLocation *Test::location(location_t loc) {
-		return locations_[static_cast<int>(loc)];
+		return location_[static_cast<int>(loc)];
 	}
 	Person *Test::person()
 	{
@@ -68,11 +68,9 @@ namespace AUS2
 		return this->comment_;
 	}
 	const std::string Test::date() {
-		tm *ltm = std::localtime(&this->date_of_test_);
 		char buff[100];
-		std::strftime(buff, 100, "%d.%m.%Y %H:%M:%S", ltm);
+		std::strftime(buff, 100, "%d.%m.%Y %H:%M:%S", std::localtime(&this->date_of_test_));
 		std::string result = std::string(buff);
-		delete ltm;
 		return result;
 	}
 	TestLocation::TestLocation(int id, location_t location) : id_(id), location_(location) {

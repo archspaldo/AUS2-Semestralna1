@@ -280,6 +280,7 @@ namespace AUS2
 		TwoThreeTableNode *current_node = this->root_;
 
 		if (!this->root_) {
+			delete list;
 			return return_list;
 		}
 

@@ -18,11 +18,11 @@ namespace AUS2
 	}
 
 	void Controller::import_state() {
-		this->storage_->save_data();
+		this->storage_->load_data();
 	}
 
 	void Controller::export_state() {
-		this->storage_->load_data();
+		this->storage_->save_data();
 	}
 
 	Person *Controller::add_person(const std::string id, const std::string name, const std::string surname) {
@@ -93,6 +93,19 @@ namespace AUS2
 		return this->storage_->test_list_by_id(id);
 	}
 
+	std::list<Test *> *Controller::test_list_by_id(const std::string &id, bool positive_only, std::string date_start, std::string date_end) {
+		struct tm *date = (tm *)calloc(1, sizeof(tm));
+		std::istringstream ss{ date_start }, ss2{ date_end };
+		ss >> std::get_time(date, "%d.%m.%Y %H:%M:%S");
+		time_t d_start = std::mktime(date);
+		free(date);
+		date = (tm *)calloc(1, sizeof(tm));
+		ss2 >> std::get_time(date, "%d.%m.%Y %H:%M:%S");
+		time_t d_end = std::mktime(date);
+		free(date);
+		return this->storage_->test_list_by_id(id, positive_only, d_start, d_end);
+	}
+
 	std::list<Test *> *Controller::test_list_by_location(location_t location, bool positive_only, const int id, const std::string date_start, const std::string date_end) {
 		struct tm *date = (tm *)calloc(1, sizeof(tm));
 		std::istringstream ss{ date_start }, ss2{ date_end };
@@ -123,12 +136,18 @@ namespace AUS2
 	std::list<std::pair<TestLocation *, int> *> *Controller::location_list_by_positive_person_count(location_t location, const std::string date_start, const std::string date_end) {
 		std::list<Person *> *l;
 		std::list<std::pair<TestLocation *, int> *> *return_list = new std::list<std::pair<TestLocation *, int> *>();
-		for (TestLocation *loc : *this->storage_->location_list(location)) {
+		auto p = this->storage_->location_list(location);
+		for (TestLocation *loc : *p) {
 			l = this->person_list_by_location(location, loc->id(), date_start, date_end);
 			return_list->push_back(new std::pair< TestLocation *, int>(loc, l->size()));
 			delete l;
 		}
+		delete p;
+		return_list->sort([](std::pair<TestLocation *, int> *a, std::pair<TestLocation *, int> *b) { return a->second > b->second; });
 		return return_list;
+	}
+	std::list<Test *> *Controller::test_by_county(const int id) {
+		return this->storage_->test_by_county(id);
 	}
 }
 

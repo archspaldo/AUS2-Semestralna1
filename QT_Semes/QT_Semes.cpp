@@ -83,6 +83,8 @@ void QT_Semes::on_tester_triggered() {
 
 void QT_Semes::on_import_triggered() {
     this->controller_->import_state();
+    this->person_view();
+    this->person_view_->reset_model();
 }
 
 void QT_Semes::on_export_triggered() {

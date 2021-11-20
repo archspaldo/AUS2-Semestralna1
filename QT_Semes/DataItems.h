@@ -68,7 +68,7 @@ namespace AUS2
 	private:
 		std::string uuid_;
 		Person *person_;
-		TestLocation **locations_;
+		TestLocation **location_;
 		bool result_;
 		time_t date_of_test_;
 		std::string comment_;

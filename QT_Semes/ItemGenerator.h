@@ -2,6 +2,7 @@
 #include "DataItems.h"
 #include "2-3Tree.h"
 #include <fstream>
+#include <sstream>
 #include <boost/uuid/uuid.hpp>
 #include <boost/uuid/uuid_generators.hpp>
 #include <boost/lexical_cast.hpp>
